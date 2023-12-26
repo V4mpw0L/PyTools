@@ -5,7 +5,7 @@ import subprocess
 import time
 import requests
 
-# Define colors
+# Define colors and testing the update
 class colors:
     RED = '\033[31m'
     GREEN = '\033[32m'
