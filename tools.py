@@ -87,6 +87,11 @@ def geolocate_ip():
         print(f"{colors.GREEN}{key}: {value}{colors.NORMAL}")
     draw_line()
 
+# Function to update the script from GitHub
+def update_script():
+    os.system('git pull origin main')  # Assuming your default branch is 'main'
+    print_box("Script updated successfully. Please restart the script.")
+    exit()
 
 # Function to show disk usage
 def disk_usage():
@@ -119,7 +124,6 @@ def network_info():
         else:
             print(line)
 
-
 # Menu
 while True:
     draw_line()
@@ -136,6 +140,7 @@ while True:
     print(f"{colors.BLUE}{colors.BOLD}7.| List Running Processes{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}8.| Network Information{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}9.| Exit{colors.NORMAL}")
+    print(f"{colors.BLUE}{colors.BOLD}10.| Update the script{colors.NORMAL}")  # Added option to update the script
     draw_line()
 
     choice = input("Enter your choice: ")
@@ -158,5 +163,7 @@ while True:
         network_info()
     elif choice == '9':
         break
+    elif choice == '10':  # Added option to update the script
+        update_script()
     else:
         print("Invalid option. Please try again.")
