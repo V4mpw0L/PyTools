@@ -8,7 +8,7 @@
     
  ## Description 
   
- **Python Tools is a tool that i created to make it easier for me when manipulating my Linux System, so i have decided to learn Python and the same time create a script that speed my daily tasks. 
+ *Python Tools is a tool that i created to make it easier for me when manipulating my Linux System, so i have decided to learn Python and the same time create a script that speed my daily tasks. 
   
  **Key Features:** 
 
