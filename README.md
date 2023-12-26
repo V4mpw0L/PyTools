@@ -7,10 +7,10 @@
     
 ### [+] Installation
 
-##### Install dependencies (git, python)
+##### Install dependencies (git, python, figlet)
 
  - For Debian (Ubuntu, Kali-Linux,)
- - ```sudo apt install git python3 python3-pip -y```
+ - ```sudo apt install git figlet python3 python3-pip -y```
 
 ##### Clone this repository
 
