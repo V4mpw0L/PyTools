@@ -5,12 +5,22 @@
  
   * Project that i am wrriting as i learn Python !
     
- ## Installation 
- * sudo apt update
- * sudo apt upgrade
- * git clone https://github.com/V4mpw0L/Tools.git
- * cd Tools
- * python3 tools.py
+### [+] Installation
+
+##### Install dependencies (git, python, php ssh)
+
+ - For Debian (Ubuntu, Kali-Linux,)
+    - ```sudo apt install git python3 python3-pip -y```
+
+##### Clone this repository
+
+ - ```git clone https://github.com/V4mpw0L/Tools.git```
+
+##### Enter the directory
+ - ```cd Tools```
+
+##### Run the tool
+ - ```python3 tools.py```
     
  ## Description 
   
