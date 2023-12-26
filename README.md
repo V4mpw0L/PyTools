@@ -7,7 +7,7 @@
     
 ### [+] Installation
 
-##### Install dependencies (git, python, php ssh)
+##### Install dependencies (git, python)
 
  - For Debian (Ubuntu, Kali-Linux,)
     - ```sudo apt install git python3 python3-pip -y```
@@ -37,7 +37,7 @@
  * List Running Processes
  * Network Information
  * Exit
- * Update the Script
+ * Update the Script (Connects with github branch to update the script if any update.)
    
  ## Technologies Used 
   
