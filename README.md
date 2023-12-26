@@ -3,12 +3,18 @@
   
  #### By V4mpw0L 
  
-  * Project that i am wrriting as i learn Python ! 
-
+  * Project that i am wrriting as i learn Python !
+    
+ ## Installation 
+ * sudo apt update
+ * sudo apt upgrade
+ * git clone https://github.com/V4mpw0L/Tools.git
+ * cd Tools
+ * python3 tools.py
     
  ## Description 
   
- *Python Tools is a tool that i created to make it easier for me when manipulating my Linux System, so i have decided to learn Python and the same time create a script that speed my daily tasks. 
+ * Python Tools is a tool that i created to make it easier for me when manipulating my Linux System, so i have decided to learn Python and the same time create a script that speed my daily tasks. 
   
  **Key Features:** 
 
