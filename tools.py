@@ -52,7 +52,7 @@ def update_system():
     # Print System Update message
     print("Starting system update...")
     print(colors.BLUE + colors.BOLD)
-    os.system('figlet -c -f big "UPDATING..."')
+    os.system('figlet -f big "UPDATING..."')
     print(colors.NORMAL)
     draw_line()
 
@@ -91,16 +91,9 @@ def geolocate_ip():
 
 # Function to update the script from GitHub
 def update_script():
-    print_box(colors.YELLOW + "Updating script from GitHub..." + colors.NORMAL)
-    result = os.system('git pull origin main')  # Assuming your default branch is 'main'
-    
-    if result == 0:
-        print_box(colors.GREEN + "Script updated successfully. Please restart the script." + colors.NORMAL)
-    else:
-        print_box(colors.RED + "An error occurred while updating the script." + colors.NORMAL)
-    
+    os.system('git pull origin main')  # Assuming your default branch is 'main'
+    print_box("Script updated successfully. Please restart the script.")
     exit()
-
 
 # Function to show disk usage
 def disk_usage():
@@ -122,6 +115,11 @@ def list_processes():
     print_box("Running Processes")
     os.system('ps aux')
 
+# Function to show system information
+def system_information():
+    print_box("System Information")
+    os.system('neofetch')
+
 # Function to show network information
 def network_info():
     print_box("Network Information")
@@ -137,7 +135,7 @@ def network_info():
 while True:
     draw_line()
     print(colors.BLUE + colors.BOLD)
-    os.system('figlet -c -f big " M E N U "')
+    os.system('figlet  -f big " M E N U "')
     print(colors.NORMAL)
     draw_line()
     print(f"{colors.BLUE}{colors.BOLD}1.| Update the system{colors.NORMAL}")
@@ -148,8 +146,9 @@ while True:
     print(f"{colors.BLUE}{colors.BOLD}6.| System Uptime{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}7.| List Running Processes{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}8.| Network Information{colors.NORMAL}")
-    print(f"{colors.BLUE}{colors.BOLD}9.| Exit{colors.NORMAL}")
+    print(f"{colors.BLUE}{colors.BOLD}9.| System Information{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}10.| Update the script{colors.NORMAL}")
+    print(f"{colors.BLUE}{colors.BOLD}11.| Exit{colors.NORMAL}")
     draw_line()
 
     choice = input("Enter your choice: ")
@@ -171,8 +170,10 @@ while True:
     elif choice == '8':
         network_info()
     elif choice == '9':
-        break
+        system_information()
     elif choice == '10':
         update_script()
+    elif choice == '11':
+        break
     else:
         print("Invalid option. Please try again.")
