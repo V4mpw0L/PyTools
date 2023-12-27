@@ -91,9 +91,16 @@ def geolocate_ip():
 
 # Function to update the script from GitHub
 def update_script():
-    os.system('git pull origin main')  # Assuming your default branch is 'main'
-    print_box("Script updated successfully. Please restart the script.")
+    print_box(colors.YELLOW + "Updating script from GitHub..." + colors.NORMAL)
+    result = os.system('git pull origin main')  # Assuming your default branch is 'main'
+    
+    if result == 0:
+        print_box(colors.GREEN + "Script updated successfully. Please restart the script." + colors.NORMAL)
+    else:
+        print_box(colors.RED + "An error occurred while updating the script." + colors.NORMAL)
+    
     exit()
+
 
 # Function to show disk usage
 def disk_usage():
