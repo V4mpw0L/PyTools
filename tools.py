@@ -5,7 +5,7 @@ import subprocess
 import time
 import requests
 
-# Define colors and testing the update
+# Define colors
 class colors:
     RED = '\033[31m'
     GREEN = '\033[32m'
@@ -91,6 +91,13 @@ def geolocate_ip():
 
 # Function to update the script from GitHub
 def update_script():
+    if not command_exists("git"):
+        print_box("Error: 'git' command not found. Please install it.")
+        return
+    
+    # Backup the current script
+    os.system('cp tools.py tools_backup.py')
+    
     os.system('git pull origin main')  # Assuming your default branch is 'main'
     print_box("Script updated successfully. Please restart the script.")
     exit()
@@ -165,7 +172,4 @@ while True:
         network_info()
     elif choice == '9':
         break
-    elif choice == '10':  # Added option to update the script
-        update_script()
-    else:
-        print("Invalid option. Please try again.")
+    elif choice == '10
