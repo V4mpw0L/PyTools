@@ -7,10 +7,10 @@
     
 ### [+] Installation
 
-##### Install dependencies (git, python, figlet)
+##### Install dependencies (git, python, figlet, neofetch)
 
  - For Debian (Ubuntu, Kali-Linux,)
- - ```sudo apt install git figlet python3 python3-pip -y```
+ - ```sudo apt install git figlet neofetch python3 python3-pip -y```
 
 ##### Clone this repository
 
@@ -28,16 +28,17 @@
   
  **Key Features:** 
 
- * Update your system ( Option to update, upgrade, autoremove and autoclean the system)
- * Ping a website ( Option to Ping a Website to retrieve the IP Address.)
- * Geolocate an IP (Option to find a location of an IP Address.)
- * Disk Usage
- * Memory Usage
- * System Uptime  
- * List Running Processes
- * Network Information
- * Exit
- * Update the Script (Connects with github branch to update the script if any update.)
+ * Update your system ( Option to UPDATE, UPGRADE, AUTOREMOVE and AUTOCLEAN the system in one command.)
+ * Ping a website ( Option to Ping a Website to retrieve the IP Address with PING -C)
+ * Geolocate an IP (Option to find a location of an IP Addresswith REQUESTS.GET)
+ * Disk Usage (Shows the usage of the disk and its divisions with DF -H)
+ * Memory Usage (Shows the usage of the memory ram of the computer FREE -H)
+ * System Uptime (Shows how long the system is up with UPTIME.) 
+ * List Running Processes (List all running processes on the computer with PS AUX)
+ * Network Information (Shows Informations about the network connected with IP ADDR)
+ * System Information (Shows System information with NEOFETCH.)
+ * Update the Script (Connects with github branch to update the script if any update with GIT PULL)
+ * Exit (Exit the script. also CTRL + C to stop the script. BREAK) 
    
  ## Technologies Used 
   
