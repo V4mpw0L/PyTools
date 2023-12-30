@@ -10,7 +10,7 @@
 ##### Install Updates and Upgrades.
 
  - For Debian (Ubuntu, Kali-Linux,)
- - ```sudo apt update -y && sudo apt upgrade -y
+ - ```sudo apt update -y && sudo apt upgrade -y```
 
 ##### Install dependencies (git, python, figlet, neofetch)
 
