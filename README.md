@@ -33,7 +33,7 @@
  * Geolocate an IP - (Option to find a location of an IP Addresswith REQUESTS.GET)
  * Disk Usage - (Shows the usage of the disk and its divisions with DF -H)
  * Memory Usage - (Shows the usage of the memory ram of the computer FREE -H)
- * System Uptime - (Shows how long the system is up with UPTIME.) 
+ * System Uptime - (Shows how long the system is up with UPTIME.)
  * List Running Processes - (List all running processes on the computer with PS AUX)
  * Network Information - (Shows Informations about the network connected with IP ADDR)
  * System Information - (Shows System information with NEOFETCH.)
