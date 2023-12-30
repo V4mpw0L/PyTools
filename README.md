@@ -3,7 +3,7 @@
   
  #### By V4mpw0L 
  
-  * Project that i am wrriting as i learn Python !
+  * A Python script for Linux system management, written as part of my Python learning journey.
     
 ### [+] Installation
 
@@ -24,7 +24,7 @@
     
  ## Description 
   
- * Python Tools is a tool that i created to make it easier for me when manipulating my Linux System, so i have decided to learn Python and the same time create a script that speed my daily tasks. 
+ * Python Tools is a script designed to streamline Linux system management tasks. It was developed as a learning project to enhance my Python skills and automate routine tasks.
   
  **Key Features:** 
 
