@@ -2,3 +2,4 @@ pytube
 tqdm
 alive-progress
 requests
+slugify
