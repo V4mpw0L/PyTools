@@ -4,8 +4,11 @@ import os
 import subprocess
 import time
 import requests
+import sys
 from pytube import YouTube
 from tqdm import tqdm
+from alive_progress import alive_bar
+
 
 # Define colors and testing the update
 class colors:
@@ -29,15 +32,11 @@ def print_box(message):
 
 # Function to draw a progress bar
 def progress_bar():
-    total = 30
-    for i in range(total + 1):
-        time.sleep(0.1)
-        percent = i * 100 // total
-        filled = i * 73 // total
-        empty = 73 - filled
-
-        print(f"{colors.CYAN}{percent}%{colors.NORMAL} [{colors.CYAN}{'=' * filled}{colors.NORMAL}{' ' * empty}]", end='\r')
-    print()
+    total = 31  # Set total to 31 instead of 30
+    with alive_bar(total, bar='classic', spinner='dots_waves', title=f"\033[1;36mDownloading\033[0m", length=40, enrich_print=True, manual=False) as bar:
+        for _ in range(total):
+            time.sleep(0.1)
+            bar()
 
 # Function to check if a command is available
 def command_exists(command):
