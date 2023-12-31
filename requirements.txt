@@ -1,0 +1,4 @@
+pytube
+tqdm
+alive-progress
+requests
