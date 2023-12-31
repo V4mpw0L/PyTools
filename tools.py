@@ -6,9 +6,10 @@ import time
 import requests
 import sys
 from pytube import YouTube
+from pytube import Playlist
 from tqdm import tqdm
 from alive_progress import alive_bar
-
+from slugify import slugify
 
 # Define colors and testing the update
 class colors:
@@ -133,67 +134,92 @@ def network_info():
 
 # Function to download video or mp3 from YouTube with progress bar
 def download_youtube():
-    url = input("Enter the YouTube video URL: ")
+    url = input("Enter the YouTube video URL or playlist URL: ")
+
+    if 'playlist' in url:
+        playlist = Playlist(url)
+        print(f"Downloading playlist: {playlist.title}")
+
+        # Ask for stream selection before downloading videos
+        print_box("Choose an option:")
+        print(f"{colors.BLUE}{colors.BOLD}1.| Download Video{colors.NORMAL}")
+        print(f"{colors.BLUE}{colors.BOLD}2.| Download Audio (MP3){colors.NORMAL}")
+        print(f"{colors.BLUE}{colors.BOLD}3.| Cancel{colors.NORMAL}")
+        draw_line()
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            print_box("Available Video Streams:")
+            yt = YouTube(playlist.video_urls[0])
+            video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
+            for i, stream in enumerate(video_streams, start=1):
+                print(f"{colors.BLUE}{colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
+            selected_stream = int(input("Enter the number of the stream to download: "))
+            selected_stream -= 1  # Adjust for 0-based indexing
+
+        for url in playlist.video_urls:
+            download_video_or_audio(url, auto_download=True, choice=choice, selected_stream=selected_stream)
+    else:
+        download_video_or_audio(url)
+
+def download_video_or_audio(url, auto_download=False, choice=None, selected_stream=None):
     yt = YouTube(url)
 
     print(f"{colors.GREEN}{colors.BOLD}Title: {yt.title}{colors.NORMAL}")
     print(f"{colors.GREEN}{colors.BOLD}Duration: {yt.length // 60} minutes {yt.length % 60} seconds{colors.NORMAL}")
 
-    print_box("Choose an option:")
-    print(f"{colors.BLUE}{colors.BOLD}1.| Download Video{colors.NORMAL}")
-    print(f"{colors.BLUE}{colors.BOLD}2.| Download Audio (MP3){colors.NORMAL}")
-    print(f"{colors.BLUE}{colors.BOLD}3.| Cancel{colors.NORMAL}")
-    draw_line()
-
-    choice = input("Enter your choice: ")
-
     if choice == '1':
-        print_box("Available Video Streams:")
-        video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
-        for i, stream in enumerate(video_streams, start=1):
-            print(f"{colors.BLUE}{colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
-
-        selected_stream = int(input("Enter the number of the stream to download: "))
-        selected_stream -= 1  # Adjust for 0-based indexing
-
-        video = video_streams[selected_stream]
-
-        print(f"{colors.GREEN}{colors.BOLD}Downloading: {video.resolution} - {video.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
-
-        response = requests.get(video.url, stream=True)
-        total_size = int(response.headers.get('content-length', 0))
-
-        # Use tqdm to create a progress bar
-        with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as bar:
-            with open(f"{yt.title}_video.mp4", 'wb') as f:
-                for data in response.iter_content(chunk_size=1024):
-                    bar.update(len(data))
-                    f.write(data)
-
-        print_box(f"Video downloaded successfully as {yt.title}_video.mp4")
-
+        download_video(yt, selected_stream)
     elif choice == '2':
-        audio_streams = yt.streams.filter(only_audio=True)
-        audio = audio_streams[0]  # Select the first audio stream
-
-        print(f"{colors.GREEN}{colors.BOLD}Downloading audio: {audio.abr} - {audio.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
-
-        response = requests.get(audio.url, stream=True)
-        total_size = int(response.headers.get('content-length', 0))
-
-        # Use tqdm to create a progress bar
-        with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as bar:
-            with open(f"{yt.title}_audio.mp3", 'wb') as f:
-                for data in response.iter_content(chunk_size=1024):
-                    bar.update(len(data))
-                    f.write(data)
-
-        print_box(f"Audio downloaded successfully as {yt.title}_audio.mp3")
-
+        download_audio(yt)
     elif choice == '3':
         print("Download canceled.")
     else:
         print("Invalid option. Download canceled.")
+
+def download_video(yt, selected_stream):
+    video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
+    video = video_streams[selected_stream]
+
+    print(f"{colors.GREEN}{colors.BOLD}Downloading: {video.resolution} - {video.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
+
+    response = requests.get(video.url, stream=True)
+    total_size = int(response.headers.get('content-length', 0))
+
+    # Use tqdm to create a progress bar
+    with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as bar:
+        # Specify the folder path when opening the file for writing
+        folder_path = os.path.join(os.getcwd(), 'PlaylistVideos')
+        os.makedirs(folder_path, exist_ok=True)
+        file_path = os.path.join(folder_path, f"{slugify(yt.title)}_video.mp4")
+        with open(file_path, 'wb') as f:
+            for data in response.iter_content(chunk_size=1024):
+                bar.update(len(data))
+                f.write(data)
+
+    print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder")
+
+
+
+def download_audio(yt):
+    audio_streams = yt.streams.filter(only_audio=True)
+    audio = audio_streams[0]  # Select the first audio stream
+
+    print(f"{colors.GREEN}{colors.BOLD}Downloading audio: {audio.abr} - {audio.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
+
+    response = requests.get(audio.url, stream=True)
+    total_size = int(response.headers.get('content-length', 0))
+
+    # Use tqdm to create a progress bar
+    with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as bar:
+        with open(f"{slugify(yt.title)}_audio.mp3", 'wb') as f:
+            for data in response.iter_content(chunk_size=1024):
+                bar.update(len(data))
+                f.write(data)
+
+    print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3")
+
 
 # Menu
 while True:
