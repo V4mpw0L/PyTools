@@ -38,9 +38,7 @@
  **Key Features:** 
 
  * **Update your System** - ( Option to UPDATE, UPGRADE, AUTOREMOVE and AUTOCLEAN the system in one command.)
- * 
  * **Ping a Website** - ( Option to Ping a Website to retrieve the IP Address with PING -C)
- * 
  * **Geolocate an IP** - (Option to find a location of an IP Addresswith REQUESTS.GET)
  * **Disk Usage** - (Shows the usage of the disk and its divisions with DF -H)
  * **Memory Usage** - (Shows the usage of the memory ram of the computer FREE -H)
