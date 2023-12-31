@@ -17,13 +17,13 @@
  - For Debian (Ubuntu, Kali-Linux,)
  - ```sudo apt install git figlet neofetch python3 python3-pip -y```
 
-##### PIP install Requeriments
-
- - ```pip install -r requirements.txt```
-
 ##### Clone this repository
 
  - ```git clone https://github.com/V4mpw0L/Tools.git```
+
+##### PIP install Requeriments
+
+ - ```pip install -r requirements.txt```
 
 ##### Enter the directory
  - ```cd Tools```
