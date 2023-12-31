@@ -21,12 +21,12 @@
 
  - ```git clone https://github.com/V4mpw0L/Tools.git```
 
+##### Enter the directory
+ - ```cd Tools```
+
 ##### PIP install Requeriments
 
  - ```pip install -r requirements.txt```
-
-##### Enter the directory
- - ```cd Tools```
 
 ##### Run the tool
  - ```python3 tools.py```
