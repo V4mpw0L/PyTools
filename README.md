@@ -46,6 +46,7 @@
  * List Running Processes - (List all running processes on the computer with PS AUX)
  * Network Information - (Shows Informations about the network connected with IP ADDR)
  * System Information - (Shows System information with NEOFETCH.)
+ * YouTube Video or MP3 Download - (Download a Video or MP3 from a Youtube Video, also downloads Playlists, pasting the Playlist Link.)
  * Update the Script - (Connects with github branch to update the script if any update with GIT PULL)
  * Exit - (Exit the script. also CTRL + C to stop the script. BREAK) 
    
