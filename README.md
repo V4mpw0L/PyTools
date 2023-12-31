@@ -37,18 +37,18 @@
   
  **Key Features:** 
 
- * **Update your System** - ( Option to UPDATE, UPGRADE, AUTOREMOVE and AUTOCLEAN the system in one command.)
- * **Ping a Website** - ( Option to Ping a Website to retrieve the IP Address with PING -C)
- * **Geolocate an IP** - (Option to find a location of an IP Addresswith REQUESTS.GET)
- * **Disk Usage** - (Shows the usage of the disk and its divisions with DF -H)
- * **Memory Usage** - (Shows the usage of the memory ram of the computer FREE -H)
- * **System Uptime** - (Shows how long the system is up with UPTIME.)
- * **List Running Processes** - (List all running processes on the computer with PS AUX)
- * **Network Information** - (Shows Informations about the network connected with IP ADDR)
- * **System Information** - (Shows System information with NEOFETCH.)
- * **YouTube Video or MP3 Download** - (Download a Video or MP3 from a Youtube Video, also downloads Playlists, pasting the Playlist Link.)
- * **Update the Script** - (Connects with github branch to update the script if any update with GIT PULL)
- * **Exit** - (Exit the script. also CTRL + C to stop the script. BREAK) 
+ * **Update your System** - _( Option to UPDATE, UPGRADE, AUTOREMOVE and AUTOCLEAN the system in one command.)_
+ * **Ping a Website** - _( Option to Ping a Website to retrieve the IP Address with PING -C)_
+ * **Geolocate an IP** - _(Option to find a location of an IP Addresswith REQUESTS.GET)_
+ * **Disk Usage** - _(Shows the usage of the disk and its divisions with DF -H)_
+ * **Memory Usage** - _(Shows the usage of the memory ram of the computer FREE -H)_
+ * **System Uptime** - _(Shows how long the system is up with UPTIME.)_
+ * **List Running Processes** - _(List all running processes on the computer with PS AUX)_
+ * **Network Information** - _(Shows Informations about the network connected with IP ADDR)_
+ * **System Information** - _(Shows System information with NEOFETCH.)_
+ * **YouTube Video or MP3 Download** - _(Download a Video or MP3 from a Youtube Video, also downloads Playlists, pasting the Playlist Link.)_
+ * **Update the Script** - _(Connects with github branch to update the script if any update with GIT PULL)_
+ * **Exit** - _(Exit the script. also CTRL + C to stop the script. BREAK)_ 
    
  ## Technologies Used 
   
