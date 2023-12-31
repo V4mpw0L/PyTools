@@ -154,7 +154,12 @@ def download_youtube():
             yt = YouTube(playlist.video_urls[0])
             video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
             for i, stream in enumerate(video_streams, start=1):
-                print(f"{colors.BLUE}{colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
+                total_size = 0
+                for url in playlist.video_urls:
+                    yt = YouTube(url)
+                    video_stream = yt.streams.get_by_itag(stream.itag)
+                    total_size += video_stream.filesize
+                print(f"{colors.BLUE}{colors.BOLD}{i}.| {stream.resolution} - {total_size / 1024 / 1024:.2f} MB{colors.NORMAL}")
             selected_stream = int(input("Enter the number of the stream to download: "))
             selected_stream -= 1  # Adjust for 0-based indexing
 
@@ -199,7 +204,6 @@ def download_video(yt, selected_stream):
                 f.write(data)
 
     print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder")
-
 
 
 def download_audio(yt):
