@@ -7,7 +7,7 @@
     
  ![Screenshot_20240101-115401.png](https://github.com/V4mpw0L/Tools/assets/125161567/929265f8-83bc-4140-ae50-feb65303fc97)
     
-### [+] Installation
+### 🚀 Installation
 
 ##### Install Updates and Upgrades.
 
@@ -52,15 +52,15 @@
  * **Update the Script** - _(Connects with github branch to update the script if any update with GIT PULL)_
  * **Exit** - _(Exit the script. also CTRL + C to stop the script. BREAK)_ 
    
- ## Technologies Used 
+ ## 🛠️ Technologies Used 
   
- * Python
+ * Python 🐍
    
- ## Links 
+ ## 🔗 Links 
   
  *
   
- ## License 
+ ## 📜 License 
   
  This software is licensed under the MIT license. 
   
