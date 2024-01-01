@@ -81,6 +81,15 @@ def run_command(command, message):
 
 
 # Function to ping a website or IP
+def resolve_ip(site):
+    try:
+        result = subprocess.getoutput(f'dig +short {site}')
+        return result.strip()  # Remove leading/trailing whitespaces
+    except Exception as e:
+        logging.warning(f"Failed to resolve IP address. Error: {e}")
+        return None
+
+# Function to ping a website or IP
 def ping_site():
     try:
         site = input("Enter the website or IP to ping: ")
@@ -98,22 +107,12 @@ def ping_site():
                     print(f"{Colors.RED}Reverse DNS lookup failed. Unable to retrieve domain name.{Colors.NORMAL}")
             except Exception as reverse_dns_error:
                 print(f"{Colors.RED}Reverse DNS lookup failed. Error: {reverse_dns_error}{Colors.NORMAL}")
-            
-            perform_ping(site)
         else:
             print(f"Unable to resolve IP address for {site}. Ping aborted.")
     except Exception as e:
         logging.error(f"Ping failed. Error: {e}")
         print(f"Error: {e}")
 
-# Moved outside the ping_site function
-def resolve_ip(site):
-    try:
-        result = subprocess.getoutput(f'dig +short {site}')
-        return result.strip()  # Remove leading/trailing whitespaces
-    except Exception as e:
-        logging.warning(f"Failed to resolve IP address. Error: {e}")
-        return None
 
 # Function to geolocate an IP
 def geolocate_ip():
