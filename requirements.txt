@@ -3,3 +3,4 @@ tqdm
 alive-progress
 requests
 slugify
+colorama
