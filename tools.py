@@ -4,13 +4,14 @@ import os
 import subprocess
 import time
 import requests
+import socket
 from pytube import YouTube, Playlist
 from pytube.exceptions import AgeRestrictedError
 from tqdm import tqdm
 from alive_progress import alive_bar
 from colorama import Fore, Style
 from slugify import slugify
-import logging  # Import the logging module
+import logging
 
 # Define colors
 class Colors:
@@ -36,21 +37,25 @@ def print_box(message):
     draw_line()
 
 # Function to draw a progress bar
-def progress_bar(total=20):  # Set a default total value
+def progress_bar(total=20):
     with alive_bar(total, bar='classic', spinner='dots_waves', title=f"{Colors.BOLD}{Colors.CYAN}Updating...{Colors.NORMAL}", length=40, enrich_print=True, manual=False) as bar:
         for _ in range(total):
             time.sleep(0.1)
             bar()
 
-# Function to check if a command is available
-def command_exists(command):
-    return subprocess.call('type ' + command, shell=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
+# Function to check if commands are available
+def commands_exist(commands):
+    missing_commands = [command for command in commands if subprocess.call(['which', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0]
+    return not missing_commands
 
-# Check if figlet is available
-if not command_exists("figlet"):
-    logging.error("'figlet' command not found. Please install it.")
-    print("Error: 'figlet' command not found. Please install it.")
+# List of required commands
+required_commands = ['figlet', 'lolcat', 'neofetch']
+
+# Check if all required commands are available
+if not commands_exist(required_commands):
+    missing_commands_str = ', '.join(required_commands)
+    logging.error(f"One or more required commands not found: {missing_commands_str}. Please install them.")
+    print(f"Error: One or more required commands not found: {missing_commands_str}. Please install them.")
     exit(1)
 
 # Function to update the system
@@ -82,30 +87,43 @@ def run_command(command, message):
 # Function to ping a website or IP
 def ping_site():
     try:
-        site = input("Enter the website or IP to ping: ")
-        ip = resolve_ip(site)
-
-        if ip:
-            print(f"{Colors.BOLD}{Colors.RED}IP Address: {ip}{Colors.NORMAL}")
-            perform_ping(site)
+        user_input = input("Enter the website or IP to ping: ")
+        if is_ip_address(user_input):
+            website = resolve_ip(user_input)
+            print(f"{Colors.BOLD}{Colors.RED}Website: {website}{Colors.NORMAL}")
         else:
-            print(f"Unable to resolve IP address for {site}. Ping aborted.")
+            ip = resolve_ip(user_input)
+            if ip:
+                print(f"{Colors.BOLD}{Colors.RED}IP Address: {ip}{Colors.NORMAL}")
+                perform_ping(user_input)
+            else:
+                print(f"Unable to resolve IP address for {user_input}. Ping aborted.")
     except Exception as e:
         logging.error(f"Ping failed. Error: {e}")
         print(f"Error: {e}")
-def resolve_ip(site):
+def is_ip_address(value):
     try:
-        result = subprocess.getoutput(f'dig +short {site}')
-        return result.strip()  # Remove leading/trailing whitespaces
+        socket.inet_aton(value)
+        return True
+    except socket.error:
+        return False
+def resolve_ip(site_or_ip):
+    try:
+        if is_ip_address(site_or_ip):
+            return subprocess.getoutput(f'dig +short -x {site_or_ip}')
+        else:
+            result = subprocess.getoutput(f'dig +short {site_or_ip}')
+            return result.strip()
     except Exception as e:
         logging.warning(f"Failed to resolve IP address. Error: {e}")
         return None
-def perform_ping(site):
+def perform_ping(site_or_ip):
     try:
-        os.system(f'ping -c 5 {site}')
+        os.system(f'ping -c 3 {site_or_ip}')
     except Exception as e:
         logging.error(f"Ping operation failed. Error: {e}")
         print(f"Error: {e}")
+
 
 # Function to geolocate an IP
 def geolocate_ip():
@@ -177,14 +195,34 @@ def disk_usage():
         logging.error(f"Failed to retrieve disk usage. Error: {e}")
         print(f"Error: {e}")
 
-# Function to show memory usage
+# Function to show memory and swap usage
 def memory_usage():
     try:
-        print_box("Memory Usage")
-        os.system('free -h')
+        print_box("Memory and Swap Usage")
+
+        # Run the free command and capture the output
+        output = subprocess.check_output(['free', '-h'], text=True)
+
+        # Extract memory and swap information from the output
+        lines = output.split('\n')
+        header = lines[0]
+        memory_info = lines[1].split()
+        swap_info = lines[2].split()
+
+        # Print header
+        print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
+
+        # Format and print memory information with proper alignment
+        formatted_memory_info = f"{Colors.GREEN}{memory_info[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{memory_info[1]:<10}{Colors.NORMAL}  {Colors.RED}{memory_info[2]:<10}{Colors.NORMAL}  {Colors.BLUE}{memory_info[3]:<10}{Colors.NORMAL}  {Colors.YELLOW}{memory_info[4]:<10}{Colors.NORMAL}  {Colors.CYAN}{memory_info[5]:<10}{Colors.NORMAL}"
+        print(formatted_memory_info)
+
+        # Format and print swap information with proper alignment
+        formatted_swap_info = f"{Colors.GREEN}{swap_info[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{swap_info[1]:<10}{Colors.NORMAL}  {Colors.RED}{swap_info[2]:<10}{Colors.NORMAL}"
+        print(formatted_swap_info)
     except Exception as e:
-        logging.error(f"Failed to retrieve memory usage. Error: {e}")
+        logging.error(f"Failed to retrieve memory and swap usage. Error: {e}")
         print(f"Error: {e}")
+
 
 # Function to show system uptime
 def system_uptime():
