@@ -5,7 +5,7 @@
  
   * A Python script for Linux system management, written as part of my Python learning journey.
     
- ![Screenshot_2023-12-31_21_05_18](https://github.com/V4mpw0L/Tools/assets/125161567/c733d9ca-55f7-4efc-b6d6-98af09b82580)
+ ![Screenshot_20240101-115401.png](https://github.com/V4mpw0L/Tools/assets/125161567/929265f8-83bc-4140-ae50-feb65303fc97)
     
 ### [+] Installation
 
