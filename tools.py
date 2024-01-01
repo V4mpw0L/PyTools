@@ -188,7 +188,7 @@ def download_video(yt, selected_stream):
     total_size = int(response.headers.get('content-length', 0))
 
     # Use tqdm to create a progress bar
-    with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as bar:
+    with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
         # Specify the folder path when opening the file for writing
         folder_path = os.path.join(os.getcwd(), 'PlaylistVideos')
         os.makedirs(folder_path, exist_ok=True)
@@ -211,7 +211,7 @@ def download_audio(yt):
     total_size = int(response.headers.get('content-length', 0))
 
     # Use tqdm to create a progress bar
-    with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as bar:
+    with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
         with open(f"{slugify(yt.title)}_audio.mp3", 'wb') as f:
             for data in response.iter_content(chunk_size=1024):
                 bar.update(len(data))
