@@ -79,16 +79,6 @@ def run_command(command, message):
         logging.error(f"Command '{command}' failed with error code {e.returncode}.")
         print(f"Error: System update failed. Please check the logs for details.")
 
-
-# Function to ping a website or IP
-def resolve_ip(site):
-    try:
-        result = subprocess.getoutput(f'dig +short {site}')
-        return result.strip()  # Remove leading/trailing whitespaces
-    except Exception as e:
-        logging.warning(f"Failed to resolve IP address. Error: {e}")
-        return None
-
 # Function to ping a website or IP
 def ping_site():
     try:
@@ -97,22 +87,25 @@ def ping_site():
 
         if ip:
             print(f"{Colors.BOLD}{Colors.RED}IP Address: {ip}{Colors.NORMAL}")
-            
-            # Reverse DNS lookup to get the domain name from the IP
-            try:
-                domain = subprocess.getoutput(f'dig +short -x {ip}')
-                if domain:
-                    print(f"{Colors.BOLD}{Colors.GREEN}Domain: {domain.strip()}{Colors.NORMAL}")
-                else:
-                    print(f"{Colors.RED}Reverse DNS lookup failed. Unable to retrieve domain name.{Colors.NORMAL}")
-            except Exception as reverse_dns_error:
-                print(f"{Colors.RED}Reverse DNS lookup failed. Error: {reverse_dns_error}{Colors.NORMAL}")
+            perform_ping(site)
         else:
             print(f"Unable to resolve IP address for {site}. Ping aborted.")
     except Exception as e:
         logging.error(f"Ping failed. Error: {e}")
         print(f"Error: {e}")
-
+def resolve_ip(site):
+    try:
+        result = subprocess.getoutput(f'dig +short {site}')
+        return result.strip()  # Remove leading/trailing whitespaces
+    except Exception as e:
+        logging.warning(f"Failed to resolve IP address. Error: {e}")
+        return None
+def perform_ping(site):
+    try:
+        os.system(f'ping -c 5 {site}')
+    except Exception as e:
+        logging.error(f"Ping operation failed. Error: {e}")
+        print(f"Error: {e}")
 
 # Function to geolocate an IP
 def geolocate_ip():
