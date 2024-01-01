@@ -7,6 +7,7 @@ import requests
 import sys
 from pytube import YouTube
 from pytube import Playlist
+from pytube.exceptions import AgeRestrictedError
 from tqdm import tqdm
 from alive_progress import alive_bar
 from slugify import slugify
@@ -23,7 +24,7 @@ class colors:
 
 # Function to draw a line
 def draw_line():
-    print(colors.CYAN + '#' * os.get_terminal_size().columns + colors.NORMAL)
+    print(colors.BLUE + '=' * os.get_terminal_size().columns + colors.NORMAL)
 
 # Function to print a message with a box
 def print_box(message):
@@ -33,7 +34,7 @@ def print_box(message):
 
 # Function to draw a progress bar
 def progress_bar():
-    total = 31  # Set total to 31 instead of 30
+    total = 31
     with alive_bar(total, bar='classic', spinner='dots_waves', title=f"\033[1;36mDownloading\033[0m", length=40, enrich_print=True, manual=False) as bar:
         for _ in range(total):
             time.sleep(0.1)
@@ -53,7 +54,7 @@ if not command_exists("figlet"):
 def update_system():
     print("Starting system update...")
     print(colors.BLUE + colors.BOLD)
-    os.system('figlet -f standard "UPDATING..."')
+    os.system('figlet -f standard "UPDATING..." | lolcat') 
     print(colors.NORMAL)
     draw_line()
 
@@ -92,7 +93,7 @@ def geolocate_ip():
 
 # Function to update the script from GitHub
 def update_script():
-    os.system('git pull origin main')  # Assuming your default branch is 'main'
+    os.system('git pull origin main')
     print_box("Script updated successfully. Please restart the script.")
     exit()
 
@@ -135,20 +136,15 @@ def network_info():
 # Function to download video or mp3 from YouTube with progress bar
 def download_youtube():
     url = input("Enter the YouTube video URL or playlist URL: ")
-
+    print_box("Choose an option:")
+    print(f"{colors.BLUE}{colors.BOLD}1.| Download Video{colors.NORMAL}")
+    print(f"{colors.BLUE}{colors.BOLD}2.| Download Audio (MP3){colors.NORMAL}")
+    print(f"{colors.BLUE}{colors.BOLD}3.| Cancel{colors.NORMAL}")
+    draw_line()
+    choice = input("Enter your choice: ")
     if 'playlist' in url:
         playlist = Playlist(url)
         print(f"Downloading playlist: {playlist.title}")
-
-        # Ask for stream selection before downloading videos
-        print_box("Choose an option:")
-        print(f"{colors.BLUE}{colors.BOLD}1.| Download Video{colors.NORMAL}")
-        print(f"{colors.BLUE}{colors.BOLD}2.| Download Audio (MP3){colors.NORMAL}")
-        print(f"{colors.BLUE}{colors.BOLD}3.| Cancel{colors.NORMAL}")
-        draw_line()
-
-        choice = input("Enter your choice: ")
-
         if choice == '1':
             print_box("Available Video Streams:")
             yt = YouTube(playlist.video_urls[0])
@@ -157,18 +153,16 @@ def download_youtube():
                print(f"{colors.BLUE}{colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
             selected_stream = int(input("Enter the number of the stream to download: "))
             selected_stream -= 1  # Adjust for 0-based indexing
-
         for url in playlist.video_urls:
             download_video_or_audio(url, auto_download=True, choice=choice, selected_stream=selected_stream)
     else:
-        download_video_or_audio(url)
+        download_video_or_audio(url, choice=choice)
+
 
 def download_video_or_audio(url, auto_download=False, choice=None, selected_stream=None):
     yt = YouTube(url)
-
     print(f"{colors.GREEN}{colors.BOLD}Title: {yt.title}{colors.NORMAL}")
     print(f"{colors.GREEN}{colors.BOLD}Duration: {yt.length // 60} minutes {yt.length % 60} seconds{colors.NORMAL}")
-
     if choice == '1':
         download_video(yt, selected_stream)
     elif choice == '2':
@@ -179,37 +173,36 @@ def download_video_or_audio(url, auto_download=False, choice=None, selected_stre
         print("Invalid option. Download canceled.")
 
 def download_video(yt, selected_stream):
-    video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
+    try:
+        video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
+    except AgeRestrictedError:
+        print(f"{colors.RED}Age-restricted video: {yt.video_id}. This video can't be accessed without logging in.{colors.NORMAL}")
+        return
     video = video_streams[selected_stream]
-
     print(f"{colors.GREEN}{colors.BOLD}Downloading: {video.resolution} - {video.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
-
     response = requests.get(video.url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
-
     # Use tqdm to create a progress bar
     with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
-        # Specify the folder path when opening the file for writing
-        folder_path = os.path.join(os.getcwd(), 'PlaylistVideos')
+        folder_path = os.path.join(os.getcwd(), 'VideosDownloads')
         os.makedirs(folder_path, exist_ok=True)
         file_path = os.path.join(folder_path, f"{slugify(yt.title)}_video.mp4")
         with open(file_path, 'wb') as f:
             for data in response.iter_content(chunk_size=1024):
                 bar.update(len(data))
                 f.write(data)
-
     print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder")
 
-
 def download_audio(yt):
-    audio_streams = yt.streams.filter(only_audio=True)
-    audio = audio_streams[0]  # Select the first audio stream
-
+    try:
+        audio_streams = yt.streams.filter(only_audio=True)
+    except AgeRestrictedError:
+        print(f"{colors.RED}Age-restricted video: {yt.video_id}. This video can't be accessed without logging in.{colors.NORMAL}")
+        return
+    audio = audio_streams[0]
     print(f"{colors.GREEN}{colors.BOLD}Downloading audio: {audio.abr} - {audio.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
-
     response = requests.get(audio.url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
-
     # Use tqdm to create a progress bar
     with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
         with open(f"{slugify(yt.title)}_audio.mp3", 'wb') as f:
@@ -218,7 +211,6 @@ def download_audio(yt):
                 f.write(data)
 
     print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3")
-
 
 # Menu
 while True:
