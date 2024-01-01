@@ -105,6 +105,14 @@ def ping_site():
         logging.error(f"Ping failed. Error: {e}")
         print(f"Error: {e}")
 
+    def resolve_ip(site):
+    try:
+        result = subprocess.getoutput(f'dig +short {site}')
+        return result.strip()  # Remove leading/trailing whitespaces
+    except Exception as e:
+        logging.warning(f"Failed to resolve IP address. Error: {e}")
+        return None
+ 
 
 # Function to geolocate an IP
 def geolocate_ip():
