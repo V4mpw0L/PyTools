@@ -4,3 +4,4 @@ alive-progress
 requests
 slugify
 colorama
+lolcat
