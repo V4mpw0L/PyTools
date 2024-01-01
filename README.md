@@ -38,25 +38,48 @@
 ##### Run the tool
  - ```python3 tools.py```
 
-    
- ## 📝 Description 
-  
- * Python Tools is a script designed to streamline Linux system management tasks. It was developed as a learning project to enhance my Python skills and automate routine tasks.
-  
- **Key Features:** 
+    ## 📝 Description
 
- * **Update your System** - _( Option to UPDATE, UPGRADE, AUTOREMOVE and AUTOCLEAN the system in one command.)_
- * **Ping a Website** - _( Option to Ping a Website to retrieve the IP Address with PING -C)_
- * **Geolocate an IP** - _(Option to find a location of an IP Addresswith REQUESTS.GET)_
- * **Disk Usage** - _(Shows the usage of the disk and its divisions with DF -H)_
- * **Memory Usage** - _(Shows the usage of the memory ram of the computer FREE -H)_
- * **System Uptime** - _(Shows how long the system is up with UPTIME.)_
- * **List Running Processes** - _(List all running processes on the computer with PS AUX)_
- * **Network Information** - _(Shows Informations about the network connected with IP ADDR)_
- * **System Information** - _(Shows System information with NEOFETCH.)_
- * **YouTube Video or MP3 Download** - _(Download a Video or MP3 from a Youtube Video, also downloads Playlists, pasting the Playlist Link.)_
- * **Update the Script** - _(Connects with github branch to update the script if any update with GIT PULL)_
- * **Exit** - _(Exit the script. also CTRL + C to stop the script. BREAK)_ 
+**Python Tools** is a meticulously crafted script designed to optimize Linux system management tasks. Developed as a hands-on learning project, it serves the dual purpose of refining my Python skills and automating repetitive tasks efficiently.
+
+### Key Features:
+
+- **Update System**: 
+  - Provides an all-in-one command to update, upgrade, autoremove, and autoclean the system.
+
+- **Ping a Website**: 
+  - Allows you to ping a website, retrieving its IP Address using PING -C.
+
+- **Geolocate an IP**: 
+  - Provides the capability to determine the geographical location of an IP Address using REQUESTS.GET.
+
+- **Disk Usage**: 
+  - Displays a comprehensive breakdown of disk usage, including its divisions with DF -H.
+
+- **Memory Usage**: 
+  - Offers insight into the computer's RAM usage with FREE -H.
+
+- **System Uptime**: 
+  - Shows the system's uptime, indicating how long it has been running with UPTIME.
+
+- **List Running Processes**: 
+  - Provides a detailed list of all running processes on the computer using PS AUX.
+
+- **Network Information**: 
+  - Presents valuable information about the connected network with IP ADDR.
+
+- **System Information**: 
+  - Displays an overview of system information with NEOFETCH.
+
+- **YouTube Video or MP3 Download**: 
+  - Enables downloading of videos or MP3s from YouTube, including playlists by pasting the Playlist Link.
+
+- **Update the Script**: 
+  - Connects seamlessly with the GitHub branch to update the script using GIT PULL.
+
+- **Exit**: 
+  - Exits the script. Alternatively, use CTRL + C to halt the script abruptly.
+
 
    
  ## 🛠️ Technologies Used 
