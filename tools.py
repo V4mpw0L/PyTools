@@ -224,7 +224,7 @@ def download_audio(yt):
 while True:
     draw_line()
     print(colors.CYAN + colors.BOLD)
-    os.system('figlet  -f standard " M E N U "')
+    os.system('figlet -f standard " M E N U " | lolcat') 
     print(colors.NORMAL)
     draw_line()
     print(f"{colors.CYAN}{colors.BOLD}1.| Update the system{colors.NORMAL}")
