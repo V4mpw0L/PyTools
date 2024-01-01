@@ -227,7 +227,7 @@ while True:
     os.system('figlet  -f standard " M E N U "')
     print(colors.NORMAL)
     draw_line()
-    print(f"{colors.BLUE}{colors.BOLD}1.| Update the system{colors.NORMAL}")
+    print(f"{colors.CYAN}{colors.BOLD}1.| Update the system{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}2.| Ping a website or IP{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}3.| Geolocate an IP{colors.NORMAL}")
     print(f"{colors.BLUE}{colors.BOLD}4.| Disk Usage{colors.NORMAL}")
