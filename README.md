@@ -4,6 +4,8 @@
  #### By V4mpw0L 
  
   * A Python script for Linux system management, written as part of my Python learning journey.
+
+   ![Screenshot_2023-12-31_21_05_18](https://github.com/V4mpw0L/Tools/assets/125161567/b4f9b904-2b15-465a-81aa-2cd0ee5fbf92)
     
 ### [+] Installation
 
