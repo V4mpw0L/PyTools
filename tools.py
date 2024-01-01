@@ -142,6 +142,7 @@ def download_youtube():
     print(f"{colors.BLUE}{colors.BOLD}3.| Cancel{colors.NORMAL}")
     draw_line()
     choice = input("Enter your choice: ")
+    selected_stream = None  # Initialize selected_stream here
     if 'playlist' in url:
         playlist = Playlist(url)
         print(f"Downloading playlist: {playlist.title}")
@@ -156,14 +157,19 @@ def download_youtube():
         for url in playlist.video_urls:
             download_video_or_audio(url, auto_download=True, choice=choice, selected_stream=selected_stream)
     else:
-        download_video_or_audio(url, choice=choice)
-
-
+        download_video_or_audio(url, choice=choice, selected_stream=selected_stream)
 def download_video_or_audio(url, auto_download=False, choice=None, selected_stream=None):
     yt = YouTube(url)
     print(f"{colors.GREEN}{colors.BOLD}Title: {yt.title}{colors.NORMAL}")
     print(f"{colors.GREEN}{colors.BOLD}Duration: {yt.length // 60} minutes {yt.length % 60} seconds{colors.NORMAL}")
     if choice == '1':
+        if selected_stream is None:  # Only ask for user input if selected_stream is None
+            print_box("Available Video Streams:")
+            video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
+            for i, stream in enumerate(video_streams, start=1):
+                print(f"{colors.BLUE}{colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
+            selected_stream = int(input("Enter the number of the stream to download: "))
+            selected_stream -= 1  # Adjust for 0-based indexing
         download_video(yt, selected_stream)
     elif choice == '2':
         download_audio(yt)
@@ -178,7 +184,10 @@ def download_video(yt, selected_stream):
     except AgeRestrictedError:
         print(f"{colors.RED}Age-restricted video: {yt.video_id}. This video can't be accessed without logging in.{colors.NORMAL}")
         return
-    video = video_streams[selected_stream]
+    if selected_stream is not None:
+        video = video_streams[selected_stream]
+    else:
+        video = video_streams.first()
     print(f"{colors.GREEN}{colors.BOLD}Downloading: {video.resolution} - {video.filesize / 1024 / 1024:.2f} MB{colors.NORMAL}")
     response = requests.get(video.url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
@@ -192,7 +201,6 @@ def download_video(yt, selected_stream):
                 bar.update(len(data))
                 f.write(data)
     print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder")
-
 def download_audio(yt):
     try:
         audio_streams = yt.streams.filter(only_audio=True)
@@ -205,12 +213,15 @@ def download_audio(yt):
     total_size = int(response.headers.get('content-length', 0))
     # Use tqdm to create a progress bar
     with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
-        with open(f"{slugify(yt.title)}_audio.mp3", 'wb') as f:
+        folder_path = os.path.join(os.getcwd(), 'AudiosDownloads')  # Create a folder for audio downloads
+        os.makedirs(folder_path, exist_ok=True)
+        file_path = os.path.join(folder_path, f"{slugify(yt.title)}_audio.mp3")  # Save the MP3 file in the new folder
+        with open(file_path, 'wb') as f:
             for data in response.iter_content(chunk_size=1024):
                 bar.update(len(data))
                 f.write(data)
+    print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3 in the AudioDownloads folder")
 
-    print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3")
 
 # Menu
 while True:
