@@ -5,10 +5,12 @@
  
   * A Python script for Linux system management, written as part of my Python learning journey.
 
+
  #### 🖼️ Screenshot
 
     
  ![Screenshot_20240101-115401.png](https://github.com/V4mpw0L/Tools/assets/125161567/929265f8-83bc-4140-ae50-feb65303fc97)
+
     
 ### ⚙️ Installation
 
@@ -35,6 +37,7 @@
 
 ##### Run the tool
  - ```python3 tools.py```
+
     
  ## 📝 Description 
   
@@ -54,6 +57,7 @@
  * **YouTube Video or MP3 Download** - _(Download a Video or MP3 from a Youtube Video, also downloads Playlists, pasting the Playlist Link.)_
  * **Update the Script** - _(Connects with github branch to update the script if any update with GIT PULL)_
  * **Exit** - _(Exit the script. also CTRL + C to stop the script. BREAK)_ 
+
    
  ## 🛠️ Technologies Used 
   
