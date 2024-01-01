@@ -12,10 +12,10 @@
  - For Debian (Ubuntu, Kali-Linux,)
  - ```sudo apt update -y && sudo apt upgrade -y```
 
-##### Install dependencies (git, python, figlet, neofetch)
+##### Install dependencies (git, python, figlet, neofetch, lolcat)
 
  - For Debian (Ubuntu, Kali-Linux,)
- - ```sudo apt install git figlet neofetch python3 python3-pip -y```
+ - ```sudo apt install git figlet lolcat neofetch python3 python3-pip -y```
 
 ##### Clone this repository
 
