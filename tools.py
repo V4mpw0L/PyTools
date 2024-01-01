@@ -55,56 +55,97 @@ if not command_exists("figlet"):
 
 # Function to update the system
 def update_system():
-    logging.info("Starting system update...")
-    print("Starting system update...")
-    print(Colors.BLUE + Colors.BOLD)
-    os.system('figlet -f standard "UPDATING..." | lolcat')
-    print(Colors.NORMAL)
-    draw_line()
-
-    os.system('sudo apt update -y')
-    progress_bar()
-
-    os.system('sudo apt upgrade -y')
-    progress_bar()
-
-    os.system('sudo apt autoremove -y')
-    progress_bar()
-
-    os.system('sudo apt autoclean -y')
-    progress_bar()
-
-    print_box("Your system is up to date.")
+    try:
+        logging.info("Starting system update...")
+        print("Starting system update...")
+        print(Colors.BLUE + Colors.BOLD)
+        os.system('figlet -f standard "UPDATING..." | lolcat')
+        print(Colors.NORMAL)
+        draw_line()
+        run_command('sudo apt update -y', "Updating package lists...")
+        run_command('sudo apt upgrade -y', "Upgrading installed packages...")
+        run_command('sudo apt autoremove -y', "Removing unused packages...")
+        run_command('sudo apt autoclean -y', "Cleaning up package cache...")
+        print_box("Your system is up to date.")
+    except Exception as e:
+        logging.error(f"System update failed. Error: {e}")
+        print(f"Error: {e}")
+def run_command(command, message):
+    try:
+        print_box(message)
+        subprocess.run(command, shell=True, check=True)
+        progress_bar()
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Command '{command}' failed with error code {e.returncode}.")
+        print(f"Error: System update failed. Please check the logs for details.")
 
 # Function to ping a website or IP
 def ping_site():
     try:
         site = input("Enter the website or IP to ping: ")
-        ip = subprocess.getoutput(f'dig +short {site}')
-        print(f"{Colors.BOLD}{Colors.RED}IP Address: {ip}{Colors.NORMAL}")
-        os.system(f'ping -c 5 {site}')
+        ip = resolve_ip(site)
+
+        if ip:
+            print(f"{Colors.BOLD}{Colors.RED}IP Address: {ip}{Colors.NORMAL}")
+            perform_ping(site)
+        else:
+            print(f"Unable to resolve IP address for {site}. Ping aborted.")
     except Exception as e:
         logging.error(f"Ping failed. Error: {e}")
+        print(f"Error: {e}")
+def resolve_ip(site):
+    try:
+        result = subprocess.getoutput(f'dig +short {site}')
+        return result.strip()  # Remove leading/trailing whitespaces
+    except Exception as e:
+        logging.warning(f"Failed to resolve IP address. Error: {e}")
+        return None
+def perform_ping(site):
+    try:
+        os.system(f'ping -c 5 {site}')
+    except Exception as e:
+        logging.error(f"Ping operation failed. Error: {e}")
         print(f"Error: {e}")
 
 # Function to geolocate an IP
 def geolocate_ip():
     try:
         ip = input("Enter the IP to geolocate: ")
-        geo = requests.get(f"https://ipinfo.io/{ip}").json()
-
-        draw_line()
-        print(f"{Colors.GREEN}{Colors.BOLD}Geolocation info:{Colors.NORMAL}")
-        for key, value in geo.items():
-            print(f"{Colors.YELLOW}{key}: {value}{Colors.NORMAL}")
-        draw_line()
+        geo_info = get_geolocation(ip)
+        if geo_info:
+            display_geolocation_info(geo_info)
+        else:
+            print("Unable to retrieve geolocation information.")
     except Exception as e:
         logging.error(f"Geolocation failed. Error: {e}")
         print(f"Error: {e}")
+def get_geolocation(ip):
+    try:
+        response = requests.get(f"https://ipinfo.io/{ip}")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            logging.warning(f"Failed to retrieve geolocation. Status Code: {response.status_code}")
+            return None
+    except requests.RequestException as e:
+        logging.error(f"Geolocation request failed. Error: {e}")
+        return None
+def display_geolocation_info(geo_info):
+    draw_line()
+    print(f"{Colors.GREEN}{Colors.BOLD}Geolocation info:{Colors.NORMAL}")
+    for key, value in geo_info.items():
+        print(f"{Colors.YELLOW}{key}: {value}{Colors.NORMAL}")
+    draw_line()
+
 
 # Function to update the script from GitHub
 def update_script():
     try:
+        # Discard all local changes and switch to the main branch
+        os.system('git reset --hard origin/main')
+        # Clean untracked files and directories
+        os.system('git clean -fdx')
+        # Pull changes from the remote repository
         os.system('git pull origin main')
         print_box("Script updated successfully. Please restart the script.")
         logging.info("Script updated successfully.")
@@ -117,7 +158,21 @@ def update_script():
 def disk_usage():
     try:
         print_box("Disk Usage")
-        os.system('df -h')
+        df_output = subprocess.getoutput('df -h')
+        df_lines = df_output.split('\n')
+        header = df_lines[0]
+        print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
+        for fs in df_lines[1:]:
+            fields = fs.split()
+            filesystem, size, used, available, percent, mountpoint = fields[0], fields[1], fields[2], fields[3], fields[4], fields[5]
+            formatted_fs = f"{Colors.GREEN}{filesystem: <15}{Colors.NORMAL}  {size: <10}  {used: <10}  {available: <10}  {Colors.YELLOW}{percent: <6}{Colors.NORMAL}  {Colors.BLUE}{mountpoint}{Colors.NORMAL}"
+            bar_length = 20
+            used_percentage = int(percent.rstrip('%'))
+            used_blocks = int(bar_length * used_percentage / 100)
+            free_blocks = bar_length - used_blocks
+            visual_bar = f"{Colors.CYAN}[{'#' * used_blocks}{'-' * free_blocks}]{Colors.NORMAL}"
+            print(formatted_fs)
+            print(visual_bar)
     except Exception as e:
         logging.error(f"Failed to retrieve disk usage. Error: {e}")
         print(f"Error: {e}")
@@ -144,7 +199,16 @@ def system_uptime():
 def list_processes():
     try:
         print_box("Running Processes")
-        os.system('ps aux')
+        process_output = subprocess.getoutput('ps aux')
+        processes = process_output.split('\n')
+        # Print header
+        header = processes[0]
+        print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
+        for process in processes[1:]:
+            fields = process.split()
+            pid, user, cpu, mem, vsz, rss, tty, stat, start, time, command = fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6], fields[7], fields[8], fields[9], ' '.join(fields[10:])
+            formatted_process = f"{Colors.GREEN}{pid}{Colors.NORMAL}  {Colors.YELLOW}{user}{Colors.NORMAL}  {cpu}  {mem}  {vsz}  {rss}  {Colors.BLUE}{tty}{Colors.NORMAL}  {stat}  {start}  {time}  {Colors.RED}{command}{Colors.NORMAL}"
+            print(formatted_process)
     except Exception as e:
         logging.error(f"Failed to list running processes. Error: {e}")
         print(f"Error: {e}")
@@ -161,17 +225,37 @@ def system_information():
 # Function to show network information
 def network_info():
     try:
+        interface_colors = {
+            'lo': Colors.CYAN,
+            'eth0': Colors.GREEN,
+            'wlan0': Colors.YELLOW,
+            'docker0': Colors.BLUE
+        }
         print_box("Network Information")
         output = subprocess.getoutput('ip addr')
         lines = output.split('\n')
+        current_interface = None
         for line in lines:
-            if 'inet' in line:
-                print(Colors.GREEN + Colors.BOLD + line + Colors.NORMAL)
+            words = line.split()
+            for word in words:
+                if ':' in word and word[:-1] in interface_colors:
+                    current_interface = word[:-1]
+                    break
+            if current_interface:
+                print(f"{interface_colors[current_interface]}{Colors.BOLD}{current_interface}{Colors.NORMAL}")
+                for i, word in enumerate(words):
+                    if 'inet' in word and i + 1 < len(words) and '.' in words[i + 1]:
+                        ip_address = words[i + 1]
+                        print(f"IP Address: {Colors.RED}{Colors.BOLD}{ip_address}{Colors.NORMAL}")
+                        break
+                else:
+                    print(line)
             else:
                 print(line)
     except Exception as e:
         logging.error(f"Failed to retrieve network information. Error: {e}")
         print(f"Error: {e}")
+
 
 # Function to download video or mp3 from YouTube with progress bar
 def download_youtube():
