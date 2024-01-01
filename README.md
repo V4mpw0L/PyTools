@@ -4,10 +4,13 @@
  #### By V4mpw0L 
  
   * A Python script for Linux system management, written as part of my Python learning journey.
+
+ #### 🖼️ Screenshot
+
     
  ![Screenshot_20240101-115401.png](https://github.com/V4mpw0L/Tools/assets/125161567/929265f8-83bc-4140-ae50-feb65303fc97)
     
-### 🚀 Installation
+### ⚙️ Installation
 
 ##### Install Updates and Upgrades.
 
@@ -33,7 +36,7 @@
 ##### Run the tool
  - ```python3 tools.py```
     
- ## Description 
+ ## 📝 Description 
   
  * Python Tools is a script designed to streamline Linux system management tasks. It was developed as a learning project to enhance my Python skills and automate routine tasks.
   
