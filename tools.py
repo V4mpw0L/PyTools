@@ -7,6 +7,7 @@ import datetime
 import requests
 import socket
 import re
+import tkinter as tk
 from pytube import YouTube, Playlist
 from pytube.exceptions import AgeRestrictedError
 from tqdm import tqdm
@@ -26,8 +27,16 @@ class Colors:
     BOLD = Style.BRIGHT
     MAGENTA = Fore.MAGENTA
 
-# Set up logging
-logging.basicConfig(filename='script.log', level=logging.DEBUG)
+# Define the script version and credits
+SCRIPT_VERSION = "v 1.0"
+CREDITS = f"{Fore.RED}{Style.BRIGHT}V4mpw0L (2024){Style.RESET_ALL}"
+
+# FUTURE UPDATE FOR GUI INTERFACE.
+# def display_gui():
+    #root = tk.Tk()
+    #root.title("Your Tool")
+    #label = tk.Label(root, text="Welcome to Your Tool!", font=("Helvetica", 16))
+    #label.pack(pady=10) 
 
 # Add function for input validation
 def validate_menu_choice(choice):
@@ -41,6 +50,12 @@ def validate_menu_choice(choice):
     except ValueError:
         print("Invalid input. Please enter a number.")
         return None
+
+# Function to display credits
+def display_credits():
+    draw_line()
+    print(f"{Colors.MAGENTA}{Colors.BOLD}{CREDITS}{Colors.NORMAL}")
+    draw_line()
 
 # Function to draw a line
 def draw_line():
@@ -64,24 +79,33 @@ def commands_exist(commands):
     missing_commands = [command for command in commands if subprocess.call(['which', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0]
     return not missing_commands
 
+# Dependency check
+required_dependencies = ['requests', 'pytube', 'alive-progress', 'colorama', 'slugify']
+
 # List of required commands
 required_commands = ['figlet', 'lolcat', 'neofetch']
-
-# Modify log entries to include timestamps
-def log_message(message, level='info'):
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    log_entry = f"{timestamp} - [{level.upper()}] - {message}"
-    print(log_entry)  # Print to console for visibility
-    with open('script.log', 'a') as log_file:
-        log_file.write(log_entry + '\n')
-
-
 # Check if all required commands are available
 if not commands_exist(required_commands):
     missing_commands_str = ', '.join(required_commands)
     logging.error(f"One or more required commands not found: {missing_commands_str}. Please install them.")
     print(f"Error: One or more required commands not found: {missing_commands_str}. Please install them.")
     exit(1)
+
+# Configure logging with a file handler and set the logging level
+logging.basicConfig(filename='script.log', level=logging.DEBUG)
+
+# Modify log entries to include timestamps
+def log_message(message, level='info'):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"{timestamp} - [{level.upper()}] - {message}"
+    print(log_entry)
+    with open('script.log', 'a') as log_file:
+        log_file.write(log_entry + '\n')
+
+# Clear console (works for Unix-based systems, replace with 'os.system('cls')' for Windows)
+def clear_console():
+    os.system('clear')
+
 
 # Function to update the system
 def update_system():
@@ -91,7 +115,6 @@ def update_system():
         print(Colors.BLUE + Colors.BOLD)
         os.system('figlet -f standard "UPDATING..." | lolcat')
         print(Colors.NORMAL)
-        draw_line()
         run_command('sudo apt update -y', "Updating package lists...")
         run_command('sudo apt upgrade -y', "Upgrading installed packages...")
         run_command('sudo apt autoremove -y', "Removing unused packages...")
@@ -264,7 +287,6 @@ def list_processes():
         print_box("Running Processes")
         process_output = subprocess.getoutput('ps aux')
         processes = process_output.split('\n')
-        # Print header
         header = processes[0]
         print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
         for process in processes[1:]:
@@ -318,7 +340,6 @@ def network_info():
     except Exception as e:
         logging.error(f"Failed to retrieve network information. Error: {e}")
         print(f"Error: {e}")
-
 
 # Function to download video or mp3 from YouTube with progress bar
 def download_youtube():
@@ -476,7 +497,6 @@ def check_password_strength():
     except Exception as e:
         logging.error(f"Password strength check failed. Error: {e}")
         print(f"Error: {e}")
-
 def get_password_strength(password):
     if len(password) >= 16 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password) and re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         return "Password strength: Super Strong", Fore.GREEN
@@ -488,7 +508,6 @@ def get_password_strength(password):
         return "Password strength: Weak", Fore.RED
     else:
         return "Password strength: Super Weak", Fore.MAGENTA
-
 def print_colored_box(message, color):
     draw_line()
     print(color + Style.BRIGHT + message + Style.RESET_ALL)
@@ -499,7 +518,6 @@ def perform_traceroute():
     try:
         print_box("Performing traceroute...")
         destination = input("Enter the destination for traceroute: ")
-        # Use 'traceroute' command to perform traceroute
         run_command(f'traceroute {destination}', "Performing traceroute...")
     except Exception as e:
         logging.error(f"Traceroute failed. Error: {e}")
@@ -509,7 +527,8 @@ def perform_traceroute():
 def menu():
     while True:
         draw_line()
-        os.system('figlet -f standard " M e n u " | lolcat')
+        os.system('figlet -f standard "Py Tools" | lolcat')
+        os.system(f'figlet -f mini "{SCRIPT_VERSION}" | lolcat')
         draw_line()
         print(f"{Colors.CYAN}{Colors.BOLD} 1.| {Colors.CYAN}Update the system{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD} 2.| {Colors.BLUE}Ping a website or IP{Colors.NORMAL}")
@@ -526,7 +545,7 @@ def menu():
         print(f"{Colors.GREEN}{Colors.BOLD}13.| {Colors.GREEN}Download YouTube Video or MP3{Colors.NORMAL}")
         print(f"{Colors.GREEN}{Colors.BOLD}14.| {Colors.GREEN}Update the Script{Colors.NORMAL}")
         print(f"{Colors.RED}{Colors.BOLD}15.| {Colors.RED}Exit{Colors.NORMAL}")
-        draw_line()
+        display_credits()
         try:
             choice = input("Enter your choice: ")
             validated_choice = validate_menu_choice(choice)
@@ -561,8 +580,11 @@ def menu():
                     update_script()
                 elif validated_choice == 15:
                     break
+        except ValueError as ve:
+            logging.error(f"ValueError in menu: {ve}")
+            print(f"Error: {ve}")
         except Exception as e:
-            logging.error(f"Menu choice validation failed. Error: {e}")
+            logging.error(f"Exception in menu: {e}")
             print(f"Error: {e}")
 
 if __name__ == "__main__":
