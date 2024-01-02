@@ -9,8 +9,7 @@
  #### 🖼️ Screenshot
 
     
- ![1111Screenshot_2024-01-02_12_48_48](https://github.com/V4mpw0L/PyTools/assets/125161567/d16769bb-af45-4a25-b1b9-6ffc410c1630)
-
+ ![2332Screenshot_2024-01-02_15_42_53](https://github.com/V4mpw0L/PyTools/assets/125161567/008a8a2b-8034-4a41-9f56-4a3c7dc61696)
 
     
 ### ⚙️ Installation
