@@ -423,12 +423,25 @@ def download_audio(yt, max_retries=3):
 # Function to scan for malware or viruses on the system
 def scan_for_malware():
     try:
-        # Replace 'clamscan' with the actual command of your antivirus tool
+        # Try using clamscan
         run_command('clamscan --infected --recursive --suppress-ok-results', "Scanning for malware or viruses...")
         print_box("Malware scan completed.")
+    except FileNotFoundError:
+        # List of popular antivirus tools to try
+        alternative_tools = ['sophos', 'avgscan', 'chkrootkit', 'rkhunter', 'bitdefender', 'f-prot', 'eset', 'sophos-av', 'kaspersky', 'avast']
+        for tool in alternative_tools:
+            try:
+                run_command(f'{tool} --options', f"Scanning for malware or viruses with {tool}...")
+                print_box(f"Malware scan completed using {tool}.")
+                return
+            except FileNotFoundError:
+                continue
+        logging.error("No antivirus tool found on the system.")
+        print("Error: No antivirus tool found on the system. Please install an antivirus tool.")
     except Exception as e:
         logging.error(f"Malware scan failed. Error: {e}")
         print(f"Error: {e}")
+
 
 # Function to check the strength of user passwords
 def check_password_strength():
