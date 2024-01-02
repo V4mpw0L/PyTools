@@ -5,11 +5,12 @@ import subprocess
 import time
 import requests
 import socket
+import re
 from pytube import YouTube, Playlist
 from pytube.exceptions import AgeRestrictedError
 from tqdm import tqdm
 from alive_progress import alive_bar
-from colorama import Fore, Style
+from colorama import Fore, Style, Back
 from slugify import slugify
 import logging
 
@@ -22,6 +23,7 @@ class Colors:
     YELLOW = Fore.YELLOW
     NORMAL = Style.RESET_ALL
     BOLD = Style.BRIGHT
+    MAGENTA = Fore.MAGENTA
 
 # Set up logging
 logging.basicConfig(filename='script.log', level=logging.DEBUG)
@@ -37,7 +39,7 @@ def print_box(message):
     draw_line()
 
 # Function to draw a progress bar
-def progress_bar(total=20):
+def progress_bar(total=15):
     with alive_bar(total, bar='classic', spinner='dots_waves', title=f"{Colors.BOLD}{Colors.CYAN}Updating...{Colors.NORMAL}", length=40, enrich_print=True, manual=False) as bar:
         for _ in range(total):
             time.sleep(0.1)
@@ -418,7 +420,56 @@ def download_audio(yt, max_retries=3):
         logging.error(f"Audio download failed. Error: {e}")
         print(f"Error: {e}")
 
-# Menu
+# Function to scan for malware or viruses on the system
+def scan_for_malware():
+    try:
+        # Replace 'clamscan' with the actual command of your antivirus tool
+        run_command('clamscan --infected --recursive --suppress-ok-results', "Scanning for malware or viruses...")
+        print_box("Malware scan completed.")
+    except Exception as e:
+        logging.error(f"Malware scan failed. Error: {e}")
+        print(f"Error: {e}")
+
+# Function to check the strength of user passwords
+def check_password_strength():
+    try:
+        print_box("Checking password strength...")
+        user_password = input("Enter the password to check its strength: ")
+        strength_message, color = get_password_strength(user_password)
+        print_colored_box(strength_message, color)
+    except Exception as e:
+        logging.error(f"Password strength check failed. Error: {e}")
+        print(f"Error: {e}")
+
+def get_password_strength(password):
+    if len(password) >= 16 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password) and re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return "Password strength: Super Strong", Fore.GREEN
+    elif len(password) >= 12 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password):
+        return "Password strength: Strong", Fore.CYAN
+    elif len(password) >= 8 and re.search(r'[A-Za-z]', password) and re.search(r'\d', password):
+        return "Password strength: Medium", Fore.YELLOW
+    elif len(password) >= 6:
+        return "Password strength: Weak", Fore.RED
+    else:
+        return "Password strength: Super Weak", Fore.MAGENTA
+
+def print_colored_box(message, color):
+    draw_line()
+    print(color + Style.BRIGHT + message + Style.RESET_ALL)
+    draw_line()
+
+# Function to perform a traceroute to a specified destination
+def perform_traceroute():
+    try:
+        print_box("Performing traceroute...")
+        destination = input("Enter the destination for traceroute: ")
+        # Use 'traceroute' command to perform traceroute
+        run_command(f'traceroute {destination}', "Performing traceroute...")
+    except Exception as e:
+        logging.error(f"Traceroute failed. Error: {e}")
+        print(f"Error: {e}")
+
+#Menu
 def menu():
     while True:
         draw_line()
@@ -427,20 +478,23 @@ def menu():
         print(Colors.NORMAL)
         draw_line()
         print(f"{Colors.CYAN}{Colors.BOLD}1.| Update the system{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}2.| Ping a website or IP{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}3.| Geolocate an IP{Colors.NORMAL}")
+        print(f"{Colors.MAGENTA}{Colors.BOLD}2.| Ping a website or IP{Colors.NORMAL}")
+        print(f"{Colors.MAGENTA}{Colors.BOLD}3.| Geolocate an IP{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD}4.| Disk Usage{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD}5.| Memory Usage{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD}6.| System Uptime{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD}7.| List Running Processes{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD}8.| Network Information{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD}9.| System Information{Colors.NORMAL}")
-        print(f"{Colors.GREEN}{Colors.BOLD}10.| Download YouTube Video or MP3{Colors.NORMAL}")
-        print(f"{Colors.YELLOW}{Colors.BOLD}11.| Update the Script{Colors.NORMAL}")
-        print(f"{Colors.RED}{Colors.BOLD}12.| Exit{Colors.NORMAL}")
+        print(f"{Colors.MAGENTA}{Colors.BOLD}10.| Scan for Malware{Colors.NORMAL}")
+        print(f"{Colors.MAGENTA}{Colors.BOLD}11.| Check Password Strength{Colors.NORMAL}")
+        print(f"{Colors.MAGENTA}{Colors.BOLD}12.| Perform Traceroute{Colors.NORMAL}")
+        print(f"{Colors.GREEN}{Colors.BOLD}13.| Download YouTube Video or MP3{Colors.NORMAL}")
+        print(f"{Colors.YELLOW}{Colors.BOLD}14.| Update the Script{Colors.NORMAL}") 
+        print(f"{Colors.RED}{Colors.BOLD}15.| Exit{Colors.NORMAL}")
         draw_line()
         try:
-            choice = int(input("Enter your choice: "))  # Validate user input
+            choice = int(input("Enter your choice: "))
             if choice == 1:
                 update_system()
             elif choice == 2:
@@ -459,12 +513,18 @@ def menu():
                 network_info()
             elif choice == 9:
                 system_information()
-            elif choice == 11:
-                update_script()
-            elif choice == 12:
-                break
             elif choice == 10:
+                scan_for_malware()
+            elif choice == 11:
+                check_password_strength()
+            elif choice == 12:
+                perform_traceroute()
+            elif choice == 13:
                 download_youtube()
+            elif choice == 14:
+                update_script()
+            elif choice == 15:
+                break
             else:
                 print("Invalid option. Please try again.")
         except ValueError:
