@@ -17,6 +17,13 @@ from colorama import Fore, Style, Back
 from slugify import slugify
 import logging
 
+# Determine the environment (Termux or other)
+termux_environment = False
+try:
+    termux_environment = os.environ['PREFIX'] == '/data/data/com.termux/files/usr'
+except KeyError:
+    termux_environment = False
+
 # Define colors
 class Colors:
     RED = Fore.RED
@@ -86,7 +93,7 @@ required_dependencies = ['requests', 'pytube', 'alive-progress', 'colorama', 'sl
 # List of required commands
 required_commands = ['figlet', 'lolcat', 'neofetch']
 # Check if all required commands are available
-if not commands_exist(required_commands):
+if not termux_environment and not commands_exist(required_commands):
     missing_commands_str = ', '.join(required_commands)
     logging.error(f"One or more required commands not found: {missing_commands_str}. Please install them.")
     print(f"Error: One or more required commands not found: {missing_commands_str}. Please install them.")
@@ -105,7 +112,10 @@ def log_message(message, level='info'):
 
 # Clear console (works for Unix-based systems, replace with 'os.system('cls')' for Windows)
 def clear_console():
-    os.system('clear')
+    if termux_environment:
+        os.system('clear')
+    else:
+        os.system('cls')
 
 
 # Function to update the system
@@ -113,13 +123,13 @@ def update_system():
     try:
         logging.info("Starting system update...")
         print("Starting system update...")
-        print(Colors.BLUE + Colors.BOLD)
+        clear_console()
         os.system('figlet -f standard "UPDATING..." | lolcat')
         print(Colors.NORMAL)
-        run_command('sudo apt update -y', "Updating package lists...")
-        run_command('sudo apt upgrade -y', "Upgrading installed packages...")
-        run_command('sudo apt autoremove -y', "Removing unused packages...")
-        run_command('sudo apt autoclean -y', "Cleaning up package cache...")
+        run_command('sudo apt update -y' if not termux_environment else 'pkg update -y', "Updating package lists...")
+        run_command('sudo apt upgrade -y' if not termux_environment else 'pkg upgrade -y', "Upgrading installed packages...")
+        run_command('sudo apt autoremove -y' if not termux_environment else 'pkg autoremove -y', "Removing unused packages...")
+        run_command('sudo apt autoclean -y' if not termux_environment else 'pkg autoclean', "Cleaning up package cache...")
         print_box("Your system is up to date.")
     except Exception as e:
         logging.error(f"System update failed. Error: {e}")
