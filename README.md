@@ -78,7 +78,7 @@
   - Evaluate the strength of your passwords by entering them. The system categorizes the strength into Super Weak, Weak, Medium, Strong, or Super Strong, and provides an estimate of the time it would take to crack the password.
 
 -  **Perform Traceroute**:
-  -  Conduct a traceroute to a specified destination to visualize the route that packets take to reach the destination.
+  - Conduct a traceroute to a specified destination to visualize the route that packets take to reach the destination.
 
 - **YouTube Video or MP3 Download**: 
   - Enables downloading of videos or MP3s from YouTube, including playlists by pasting the Playlist Link.
