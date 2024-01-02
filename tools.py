@@ -3,6 +3,7 @@
 import os
 import subprocess
 import time
+import datetime
 import requests
 import socket
 import re
@@ -28,6 +29,19 @@ class Colors:
 # Set up logging
 logging.basicConfig(filename='script.log', level=logging.DEBUG)
 
+# Add function for input validation
+def validate_menu_choice(choice):
+    try:
+        choice = int(choice)
+        if 1 <= choice <= 15:
+            return choice
+        else:
+            print("Invalid choice. Please enter a number between 1 and 15.")
+            return None
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+        return None
+
 # Function to draw a line
 def draw_line():
     print(Colors.BLUE + '=' * os.get_terminal_size().columns + Colors.NORMAL)
@@ -52,6 +66,15 @@ def commands_exist(commands):
 
 # List of required commands
 required_commands = ['figlet', 'lolcat', 'neofetch']
+
+# Modify log entries to include timestamps
+def log_message(message, level='info'):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"{timestamp} - [{level.upper()}] - {message}"
+    print(log_entry)  # Print to console for visibility
+    with open('script.log', 'a') as log_file:
+        log_file.write(log_entry + '\n')
+
 
 # Check if all required commands are available
 if not commands_exist(required_commands):
@@ -486,9 +509,7 @@ def perform_traceroute():
 def menu():
     while True:
         draw_line()
-        print(f"{Colors.CYAN}{Colors.BOLD}")
         os.system('figlet -f standard " M e n u " | lolcat')
-        print(Colors.NORMAL)
         draw_line()
         print(f"{Colors.CYAN}{Colors.BOLD} 1.| {Colors.CYAN}Update the system{Colors.NORMAL}")
         print(f"{Colors.BLUE}{Colors.BOLD} 2.| {Colors.BLUE}Ping a website or IP{Colors.NORMAL}")
@@ -503,45 +524,46 @@ def menu():
         print(f"{Colors.YELLOW}{Colors.BOLD}11.| {Colors.YELLOW}Check Password Strength{Colors.NORMAL}")
         print(f"{Colors.YELLOW}{Colors.BOLD}12.| {Colors.YELLOW}Perform Traceroute{Colors.NORMAL}")
         print(f"{Colors.GREEN}{Colors.BOLD}13.| {Colors.GREEN}Download YouTube Video or MP3{Colors.NORMAL}")
-        print(f"{Colors.GREEN}{Colors.BOLD}14.| {Colors.GREEN}Update the Script{Colors.NORMAL}") 
+        print(f"{Colors.GREEN}{Colors.BOLD}14.| {Colors.GREEN}Update the Script{Colors.NORMAL}")
         print(f"{Colors.RED}{Colors.BOLD}15.| {Colors.RED}Exit{Colors.NORMAL}")
         draw_line()
         try:
-            choice = int(input("Enter your choice: "))
-            if choice == 1:
-                update_system()
-            elif choice == 2:
-                ping_site()
-            elif choice == 3:
-                geolocate_ip()
-            elif choice == 4:
-                disk_usage()
-            elif choice == 5:
-                memory_usage()
-            elif choice == 6:
-                system_uptime()
-            elif choice == 7:
-                list_processes()
-            elif choice == 8:
-                network_info()
-            elif choice == 9:
-                system_information()
-            elif choice == 10:
-                scan_for_malware()
-            elif choice == 11:
-                check_password_strength()
-            elif choice == 12:
-                perform_traceroute()
-            elif choice == 13:
-                download_youtube()
-            elif choice == 14:
-                update_script()
-            elif choice == 15:
-                break
-            else:
-                print("Invalid option. Please try again.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
+            choice = input("Enter your choice: ")
+            validated_choice = validate_menu_choice(choice)
+            if validated_choice is not None:
+                if validated_choice == 1:
+                    update_system()
+                elif validated_choice == 2:
+                    ping_site()
+                elif validated_choice == 3:
+                    geolocate_ip()
+                elif validated_choice == 4:
+                    disk_usage()
+                elif validated_choice == 5:
+                    memory_usage()
+                elif validated_choice == 6:
+                    system_uptime()
+                elif validated_choice == 7:
+                    list_processes()
+                elif validated_choice == 8:
+                    network_info()
+                elif validated_choice == 9:
+                    system_information()
+                elif validated_choice == 10:
+                    scan_for_malware()
+                elif validated_choice == 11:
+                    check_password_strength()
+                elif validated_choice == 12:
+                    perform_traceroute()
+                elif validated_choice == 13:
+                    download_youtube()
+                elif validated_choice == 14:
+                    update_script()
+                elif validated_choice == 15:
+                    break
+        except Exception as e:
+            logging.error(f"Menu choice validation failed. Error: {e}")
+            print(f"Error: {e}")
 
 if __name__ == "__main__":
     menu()
