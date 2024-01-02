@@ -248,30 +248,19 @@ def disk_usage():
 def memory_usage():
     try:
         print_box("Memory and Swap Usage")
-
-        # Run the free command and capture the output
         output = subprocess.check_output(['free', '-h'], text=True)
-
-        # Extract memory and swap information from the output
         lines = output.split('\n')
         header = lines[0]
         memory_info = lines[1].split()
         swap_info = lines[2].split()
-
-        # Print header
         print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
-
-        # Format and print memory information with proper alignment
         formatted_memory_info = f"{Colors.GREEN}{memory_info[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{memory_info[1]:<10}{Colors.NORMAL}  {Colors.RED}{memory_info[2]:<10}{Colors.NORMAL}  {Colors.BLUE}{memory_info[3]:<10}{Colors.NORMAL}  {Colors.YELLOW}{memory_info[4]:<10}{Colors.NORMAL}  {Colors.CYAN}{memory_info[5]:<10}{Colors.NORMAL}"
         print(formatted_memory_info)
-
-        # Format and print swap information with proper alignment
         formatted_swap_info = f"{Colors.GREEN}{swap_info[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{swap_info[1]:<10}{Colors.NORMAL}  {Colors.RED}{swap_info[2]:<10}{Colors.NORMAL}"
         print(formatted_swap_info)
     except Exception as e:
         logging.error(f"Failed to retrieve memory and swap usage. Error: {e}")
         print(f"Error: {e}")
-
 
 # Function to show system uptime
 def system_uptime():
@@ -425,7 +414,6 @@ def download_video(yt, selected_stream, max_retries=3):
                 logging.warning(f"Network request failed. Retrying... (Error: {e})")
                 retry_count += 1
                 time.sleep(2 ** retry_count)
-        # If max_retries is reached, log the failure and print an error message
         logging.error(f"Video download failed after {max_retries} retries. Error: {e}")
         print(f"Error: Unable to download the video after {max_retries} retries.")
     except Exception as e:
@@ -458,7 +446,6 @@ def download_audio(yt, max_retries=3):
                 logging.warning(f"Network request failed. Retrying... (Error: {e})")
                 retry_count += 1
                 time.sleep(2 ** retry_count)
-        # If max_retries is reached, log the failure and print an error message
         logging.error(f"Audio download failed after {max_retries} retries. Error: {e}")
         print(f"Error: Unable to download the audio after {max_retries} retries.")
     except Exception as e:
