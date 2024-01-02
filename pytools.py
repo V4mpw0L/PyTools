@@ -7,7 +7,8 @@ import datetime
 import requests
 import socket
 import re
-import tkinter as tk
+#import tkinter as tk
+#FUTURE GUI UPDATE with tkinter
 from pytube import YouTube, Playlist
 from pytube.exceptions import AgeRestrictedError
 from tqdm import tqdm
