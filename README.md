@@ -41,7 +41,7 @@
 
     ## 📝 Description
 
-**Python Tools** is a meticulously crafted script designed to optimize Linux system management tasks. Developed as a hands-on learning project, it serves the dual purpose of refining my Python skills and automating repetitive tasks efficiently.
+**PyTools** is a meticulously crafted script designed to optimize Linux system management tasks. Developed as a hands-on learning project, it serves the dual purpose of refining my Python skills and automating repetitive tasks efficiently.
 
 ### Key Features:
 
@@ -99,7 +99,7 @@
    
  ## 🔗 Links 
   
- * https://github.com/V4mpw0L/Tools.git
+ * https://github.com/V4mpw0L/PyTools.git
   
  ## 📜 License 
   
