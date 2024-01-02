@@ -73,7 +73,8 @@
   - Displays an overview of system information with NEOFETCH.
     
 - **Scan for Malware**:
-  - Utilize the integrated antivirus tool (replace 'clamscan' with your actual command) to perform a deep scan for malware and viruses on your system. if no antivirus available run:  ```sudo apt-get install clamav-daemon``` it will install ClamAV.
+  - Utilize the integrated antivirus tool (replace 'clamscan' with your actual command) to perform a deep scan for malware and viruses on your system. if no antivirus:
+  - Run: ```sudo apt-get install clamav-daemon``` to install ClamAV.
 
 - **Check Password Strength**:
   - Evaluate the strength of your passwords by entering them. The system categorizes the strength into Super Weak, Weak, Medium, Strong, or Super Strong, and provides an estimate of the time it would take to crack the password.
