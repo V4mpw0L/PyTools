@@ -1,534 +1,209 @@
 #!/usr/bin/env python3
-
-import os
-import subprocess
-import time
-import requests
-import socket
-import re
-from pytube import YouTube, Playlist
+_J='content-length'
+_I='Enter the number of the stream to download: '
+_H='Available Video Streams:'
+_G='Enter your choice: '
+_F='neofetch'
+_E='mp4'
+_D=False
+_C='\n'
+_B=None
+_A=True
+import os,subprocess,time,requests,socket,re
+from pytube import YouTube,Playlist
 from pytube.exceptions import AgeRestrictedError
 from tqdm import tqdm
 from alive_progress import alive_bar
-from colorama import Fore, Style, Back
+from colorama import Fore,Style,Back
 from slugify import slugify
 import logging
-
-# Define colors
-class Colors:
-    RED = Fore.RED
-    GREEN = Fore.GREEN
-    BLUE = Fore.BLUE
-    CYAN = Fore.CYAN
-    YELLOW = Fore.YELLOW
-    NORMAL = Style.RESET_ALL
-    BOLD = Style.BRIGHT
-    MAGENTA = Fore.MAGENTA
-
-# Set up logging
-logging.basicConfig(filename='script.log', level=logging.DEBUG)
-
-# Function to draw a line
-def draw_line():
-    print(Colors.BLUE + '=' * os.get_terminal_size().columns + Colors.NORMAL)
-
-# Function to print a message with a box
-def print_box(message):
-    draw_line()
-    print(Colors.BLUE + Colors.BOLD + message + Colors.NORMAL)
-    draw_line()
-
-# Function to draw a progress bar
+class Colors:RED=Fore.RED;GREEN=Fore.GREEN;BLUE=Fore.BLUE;CYAN=Fore.CYAN;YELLOW=Fore.YELLOW;NORMAL=Style.RESET_ALL;BOLD=Style.BRIGHT;MAGENTA=Fore.MAGENTA
+logging.basicConfig(filename='script.log',level=logging.DEBUG)
+def draw_line():print(Colors.BLUE+'='*os.get_terminal_size().columns+Colors.NORMAL)
+def print_box(message):draw_line();print(Colors.BLUE+Colors.BOLD+message+Colors.NORMAL);draw_line()
 def progress_bar(total=15):
-    with alive_bar(total, bar='classic', spinner='dots_waves', title=f"{Colors.BOLD}{Colors.CYAN}Updating...{Colors.NORMAL}", length=40, enrich_print=True, manual=False) as bar:
-        for _ in range(total):
-            time.sleep(0.1)
-            bar()
-
-# Function to check if commands are available
-def commands_exist(commands):
-    missing_commands = [command for command in commands if subprocess.call(['which', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0]
-    return not missing_commands
-
-# List of required commands
-required_commands = ['figlet', 'lolcat', 'neofetch']
-
-# Check if all required commands are available
-if not commands_exist(required_commands):
-    missing_commands_str = ', '.join(required_commands)
-    logging.error(f"One or more required commands not found: {missing_commands_str}. Please install them.")
-    print(f"Error: One or more required commands not found: {missing_commands_str}. Please install them.")
-    exit(1)
-
-# Function to update the system
+	A=total
+	with alive_bar(A,bar='classic',spinner='dots_waves',title=f"{Colors.BOLD}{Colors.CYAN}Updating...{Colors.NORMAL}",length=40,enrich_print=_A,manual=_D)as B:
+		for C in range(A):time.sleep(.1);B()
+def commands_exist(commands):A=[A for A in commands if subprocess.call(['which',A],stdout=subprocess.PIPE,stderr=subprocess.PIPE)!=0];return not A
+required_commands=['figlet','lolcat',_F]
+if not commands_exist(required_commands):missing_commands_str=', '.join(required_commands);logging.error(f"One or more required commands not found: {missing_commands_str}. Please install them.");print(f"Error: One or more required commands not found: {missing_commands_str}. Please install them.");exit(1)
 def update_system():
-    try:
-        logging.info("Starting system update...")
-        print("Starting system update...")
-        print(Colors.BLUE + Colors.BOLD)
-        os.system('figlet -f standard "UPDATING..." | lolcat')
-        print(Colors.NORMAL)
-        draw_line()
-        run_command('sudo apt update -y', "Updating package lists...")
-        run_command('sudo apt upgrade -y', "Upgrading installed packages...")
-        run_command('sudo apt autoremove -y', "Removing unused packages...")
-        run_command('sudo apt autoclean -y', "Cleaning up package cache...")
-        print_box("Your system is up to date.")
-    except Exception as e:
-        logging.error(f"System update failed. Error: {e}")
-        print(f"Error: {e}")
-def run_command(command, message):
-    try:
-        print_box(message)
-        subprocess.run(command, shell=True, check=True)
-        progress_bar()
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Command '{command}' failed with error code {e.returncode}.")
-        print(f"Error: System update failed. Please check the logs for details.")
-
-# Function to ping a website or IP
+	B='Starting system update...'
+	try:logging.info(B);print(B);print(Colors.BLUE+Colors.BOLD);os.system('figlet -f standard "UPDATING..." | lolcat');print(Colors.NORMAL);draw_line();run_command('sudo apt update -y','Updating package lists...');run_command('sudo apt upgrade -y','Upgrading installed packages...');run_command('sudo apt autoremove -y','Removing unused packages...');run_command('sudo apt autoclean -y','Cleaning up package cache...');print_box('Your system is up to date.')
+	except Exception as A:logging.error(f"System update failed. Error: {A}");print(f"Error: {A}")
+def run_command(command,message):
+	A=command
+	try:print_box(message);subprocess.run(A,shell=_A,check=_A);progress_bar()
+	except subprocess.CalledProcessError as B:logging.error(f"Command '{A}' failed with error code {B.returncode}.");print(f"Error: System update failed. Please check the logs for details.")
 def ping_site():
-    try:
-        user_input = input("Enter the website or IP to ping: ")
-        if is_ip_address(user_input):
-            website = resolve_ip(user_input)
-            print(f"{Colors.BOLD}{Colors.RED}Website: {website}{Colors.NORMAL}")
-        else:
-            ip = resolve_ip(user_input)
-            if ip:
-                print(f"{Colors.BOLD}{Colors.RED}IP Address: {ip}{Colors.NORMAL}")
-                perform_ping(user_input)
-            else:
-                print(f"Unable to resolve IP address for {user_input}. Ping aborted.")
-    except Exception as e:
-        logging.error(f"Ping failed. Error: {e}")
-        print(f"Error: {e}")
+	try:
+		A=input('Enter the website or IP to ping: ')
+		if is_ip_address(A):D=resolve_ip(A);print(f"{Colors.BOLD}{Colors.RED}Website: {D}{Colors.NORMAL}")
+		else:
+			B=resolve_ip(A)
+			if B:print(f"{Colors.BOLD}{Colors.RED}IP Address: {B}{Colors.NORMAL}");perform_ping(A)
+			else:print(f"Unable to resolve IP address for {A}. Ping aborted.")
+	except Exception as C:logging.error(f"Ping failed. Error: {C}");print(f"Error: {C}")
 def is_ip_address(value):
-    try:
-        socket.inet_aton(value)
-        return True
-    except socket.error:
-        return False
+	try:socket.inet_aton(value);return _A
+	except socket.error:return _D
 def resolve_ip(site_or_ip):
-    try:
-        if is_ip_address(site_or_ip):
-            return subprocess.getoutput(f'dig +short -x {site_or_ip}')
-        else:
-            result = subprocess.getoutput(f'dig +short {site_or_ip}')
-            return result.strip()
-    except Exception as e:
-        logging.warning(f"Failed to resolve IP address. Error: {e}")
-        return None
+	A=site_or_ip
+	try:
+		if is_ip_address(A):return subprocess.getoutput(f"dig +short -x {A}")
+		else:B=subprocess.getoutput(f"dig +short {A}");return B.strip()
+	except Exception as C:logging.warning(f"Failed to resolve IP address. Error: {C}");return
 def perform_ping(site_or_ip):
-    try:
-        os.system(f'ping -c 3 {site_or_ip}')
-    except Exception as e:
-        logging.error(f"Ping operation failed. Error: {e}")
-        print(f"Error: {e}")
-
-
-# Function to geolocate an IP
+	try:os.system(f"ping -c 3 {site_or_ip}")
+	except Exception as A:logging.error(f"Ping operation failed. Error: {A}");print(f"Error: {A}")
 def geolocate_ip():
-    try:
-        ip = input("Enter the IP to geolocate: ")
-        geo_info = get_geolocation(ip)
-        if geo_info:
-            display_geolocation_info(geo_info)
-        else:
-            print("Unable to retrieve geolocation information.")
-    except Exception as e:
-        logging.error(f"Geolocation failed. Error: {e}")
-        print(f"Error: {e}")
+	try:
+		C=input('Enter the IP to geolocate: ');A=get_geolocation(C)
+		if A:display_geolocation_info(A)
+		else:print('Unable to retrieve geolocation information.')
+	except Exception as B:logging.error(f"Geolocation failed. Error: {B}");print(f"Error: {B}")
 def get_geolocation(ip):
-    try:
-        response = requests.get(f"https://ipinfo.io/{ip}")
-        if response.status_code == 200:
-            return response.json()
-        else:
-            logging.warning(f"Failed to retrieve geolocation. Status Code: {response.status_code}")
-            return None
-    except requests.RequestException as e:
-        logging.error(f"Geolocation request failed. Error: {e}")
-        return None
+	try:
+		A=requests.get(f"https://ipinfo.io/{ip}")
+		if A.status_code==200:return A.json()
+		else:logging.warning(f"Failed to retrieve geolocation. Status Code: {A.status_code}");return
+	except requests.RequestException as B:logging.error(f"Geolocation request failed. Error: {B}");return
 def display_geolocation_info(geo_info):
-    draw_line()
-    print(f"{Colors.GREEN}{Colors.BOLD}Geolocation info:{Colors.NORMAL}")
-    for key, value in geo_info.items():
-        print(f"{Colors.YELLOW}{key}: {value}{Colors.NORMAL}")
-    draw_line()
-
-
-# Function to update the script from GitHub
+	draw_line();print(f"{Colors.GREEN}{Colors.BOLD}Geolocation info:{Colors.NORMAL}")
+	for(A,B)in geo_info.items():print(f"{Colors.YELLOW}{A}: {B}{Colors.NORMAL}")
+	draw_line()
 def update_script():
-    try:
-        # Discard all local changes and switch to the main branch
-        os.system('git reset --hard origin/main')
-        # Clean untracked files and directories
-        os.system('git clean -fdx')
-        # Pull changes from the remote repository
-        os.system('git pull origin main')
-        print_box("Script updated successfully. Please restart the script.")
-        logging.info("Script updated successfully.")
-        exit()
-    except Exception as e:
-        logging.error(f"Script update failed. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to show disk usage
+	try:os.system('git reset --hard origin/main');os.system('git clean -fdx');os.system('git pull origin main');print_box('Script updated successfully. Please restart the script.');logging.info('Script updated successfully.');exit()
+	except Exception as A:logging.error(f"Script update failed. Error: {A}");print(f"Error: {A}")
 def disk_usage():
-    try:
-        print_box("Disk Usage")
-        df_output = subprocess.getoutput('df -h')
-        df_lines = df_output.split('\n')
-        header = df_lines[0]
-        print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
-        for fs in df_lines[1:]:
-            fields = fs.split()
-            filesystem, size, used, available, percent, mountpoint = fields[0], fields[1], fields[2], fields[3], fields[4], fields[5]
-            formatted_fs = f"{Colors.GREEN}{filesystem: <15}{Colors.NORMAL}  {size: <10}  {used: <10}  {available: <10}  {Colors.YELLOW}{percent: <6}{Colors.NORMAL}  {Colors.BLUE}{mountpoint}{Colors.NORMAL}"
-            bar_length = 20
-            used_percentage = int(percent.rstrip('%'))
-            used_blocks = int(bar_length * used_percentage / 100)
-            free_blocks = bar_length - used_blocks
-            visual_bar = f"{Colors.CYAN}[{'#' * used_blocks}{'-' * free_blocks}]{Colors.NORMAL}"
-            print(formatted_fs)
-            print(visual_bar)
-    except Exception as e:
-        logging.error(f"Failed to retrieve disk usage. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to show memory and swap usage
+	try:
+		print_box('Disk Usage');G=subprocess.getoutput('df -h');B=G.split(_C);H=B[0];print(Colors.CYAN+Colors.BOLD+H+Colors.NORMAL)
+		for I in B[1:]:A=I.split();J,K,L,M,C,N=A[0],A[1],A[2],A[3],A[4],A[5];O=f"{Colors.GREEN}{J: <15}{Colors.NORMAL}  {K: <10}  {L: <10}  {M: <10}  {Colors.YELLOW}{C: <6}{Colors.NORMAL}  {Colors.BLUE}{N}{Colors.NORMAL}";D=20;P=int(C.rstrip('%'));E=int(D*P/100);Q=D-E;R=f"{Colors.CYAN}[{'#'*E}{'-'*Q}]{Colors.NORMAL}";print(O);print(R)
+	except Exception as F:logging.error(f"Failed to retrieve disk usage. Error: {F}");print(f"Error: {F}")
 def memory_usage():
-    try:
-        print_box("Memory and Swap Usage")
-
-        # Run the free command and capture the output
-        output = subprocess.check_output(['free', '-h'], text=True)
-
-        # Extract memory and swap information from the output
-        lines = output.split('\n')
-        header = lines[0]
-        memory_info = lines[1].split()
-        swap_info = lines[2].split()
-
-        # Print header
-        print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
-
-        # Format and print memory information with proper alignment
-        formatted_memory_info = f"{Colors.GREEN}{memory_info[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{memory_info[1]:<10}{Colors.NORMAL}  {Colors.RED}{memory_info[2]:<10}{Colors.NORMAL}  {Colors.BLUE}{memory_info[3]:<10}{Colors.NORMAL}  {Colors.YELLOW}{memory_info[4]:<10}{Colors.NORMAL}  {Colors.CYAN}{memory_info[5]:<10}{Colors.NORMAL}"
-        print(formatted_memory_info)
-
-        # Format and print swap information with proper alignment
-        formatted_swap_info = f"{Colors.GREEN}{swap_info[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{swap_info[1]:<10}{Colors.NORMAL}  {Colors.RED}{swap_info[2]:<10}{Colors.NORMAL}"
-        print(formatted_swap_info)
-    except Exception as e:
-        logging.error(f"Failed to retrieve memory and swap usage. Error: {e}")
-        print(f"Error: {e}")
-
-
-# Function to show system uptime
+	try:print_box('Memory and Swap Usage');E=subprocess.check_output(['free','-h'],text=_A);B=E.split(_C);F=B[0];A=B[1].split();C=B[2].split();print(Colors.CYAN+Colors.BOLD+F+Colors.NORMAL);G=f"{Colors.GREEN}{A[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{A[1]:<10}{Colors.NORMAL}  {Colors.RED}{A[2]:<10}{Colors.NORMAL}  {Colors.BLUE}{A[3]:<10}{Colors.NORMAL}  {Colors.YELLOW}{A[4]:<10}{Colors.NORMAL}  {Colors.CYAN}{A[5]:<10}{Colors.NORMAL}";print(G);H=f"{Colors.GREEN}{C[0]:<10}{Colors.NORMAL}  {Colors.YELLOW}{C[1]:<10}{Colors.NORMAL}  {Colors.RED}{C[2]:<10}{Colors.NORMAL}";print(H)
+	except Exception as D:logging.error(f"Failed to retrieve memory and swap usage. Error: {D}");print(f"Error: {D}")
 def system_uptime():
-    try:
-        print_box("System Uptime")
-        os.system('uptime')
-    except Exception as e:
-        logging.error(f"Failed to retrieve system uptime. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to list running processes
+	try:print_box('System Uptime');os.system('uptime')
+	except Exception as A:logging.error(f"Failed to retrieve system uptime. Error: {A}");print(f"Error: {A}")
 def list_processes():
-    try:
-        print_box("Running Processes")
-        process_output = subprocess.getoutput('ps aux')
-        processes = process_output.split('\n')
-        # Print header
-        header = processes[0]
-        print(Colors.CYAN + Colors.BOLD + header + Colors.NORMAL)
-        for process in processes[1:]:
-            fields = process.split()
-            pid, user, cpu, mem, vsz, rss, tty, stat, start, time, command = fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6], fields[7], fields[8], fields[9], ' '.join(fields[10:])
-            formatted_process = f"{Colors.GREEN}{pid}{Colors.NORMAL}  {Colors.YELLOW}{user}{Colors.NORMAL}  {cpu}  {mem}  {vsz}  {rss}  {Colors.BLUE}{tty}{Colors.NORMAL}  {stat}  {start}  {time}  {Colors.RED}{command}{Colors.NORMAL}"
-            print(formatted_process)
-    except Exception as e:
-        logging.error(f"Failed to list running processes. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to show system information
+	try:
+		print_box('Running Processes');D=subprocess.getoutput('ps aux');B=D.split(_C);E=B[0];print(Colors.CYAN+Colors.BOLD+E+Colors.NORMAL)
+		for F in B[1:]:A=F.split();G,H,I,J,K,L,M,N,O,P,Q=A[0],A[1],A[2],A[3],A[4],A[5],A[6],A[7],A[8],A[9],' '.join(A[10:]);R=f"{Colors.GREEN}{G}{Colors.NORMAL}  {Colors.YELLOW}{H}{Colors.NORMAL}  {I}  {J}  {K}  {L}  {Colors.BLUE}{M}{Colors.NORMAL}  {N}  {O}  {P}  {Colors.RED}{Q}{Colors.NORMAL}";print(R)
+	except Exception as C:logging.error(f"Failed to list running processes. Error: {C}");print(f"Error: {C}")
 def system_information():
-    try:
-        print_box("System Information")
-        os.system('neofetch')
-    except Exception as e:
-        logging.error(f"Failed to retrieve system information. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to show network information
+	try:print_box('System Information');os.system(_F)
+	except Exception as A:logging.error(f"Failed to retrieve system information. Error: {A}");print(f"Error: {A}")
 def network_info():
-    try:
-        interface_colors = {
-            'lo': Colors.CYAN,
-            'eth0': Colors.GREEN,
-            'wlan0': Colors.YELLOW,
-            'docker0': Colors.BLUE
-        }
-        print_box("Network Information")
-        output = subprocess.getoutput('ip addr')
-        lines = output.split('\n')
-        current_interface = None
-        for line in lines:
-            words = line.split()
-            for word in words:
-                if ':' in word and word[:-1] in interface_colors:
-                    current_interface = word[:-1]
-                    break
-            if current_interface:
-                print(f"{interface_colors[current_interface]}{Colors.BOLD}{current_interface}{Colors.NORMAL}")
-                for i, word in enumerate(words):
-                    if 'inet' in word and i + 1 < len(words) and '.' in words[i + 1]:
-                        ip_address = words[i + 1]
-                        print(f"IP Address: {Colors.RED}{Colors.BOLD}{ip_address}{Colors.NORMAL}")
-                        break
-                else:
-                    print(line)
-            else:
-                print(line)
-    except Exception as e:
-        logging.error(f"Failed to retrieve network information. Error: {e}")
-        print(f"Error: {e}")
-
-
-# Function to download video or mp3 from YouTube with progress bar
+	try:
+		F={'lo':Colors.CYAN,'eth0':Colors.GREEN,'wlan0':Colors.YELLOW,'docker0':Colors.BLUE};print_box('Network Information');H=subprocess.getoutput('ip addr');I=H.split(_C);C=_B
+		for D in I:
+			A=D.split()
+			for B in A:
+				if':'in B and B[:-1]in F:C=B[:-1];break
+			if C:
+				print(f"{F[C]}{Colors.BOLD}{C}{Colors.NORMAL}")
+				for(E,B)in enumerate(A):
+					if'inet'in B and E+1<len(A)and'.'in A[E+1]:J=A[E+1];print(f"IP Address: {Colors.RED}{Colors.BOLD}{J}{Colors.NORMAL}");break
+				else:print(D)
+			else:print(D)
+	except Exception as G:logging.error(f"Failed to retrieve network information. Error: {G}");print(f"Error: {G}")
 def download_youtube():
-    try:
-        url = input("Enter the YouTube video URL or playlist URL: ")
-        print_box("Choose an option:")
-        print(f"{Colors.BLUE}{Colors.BOLD}1.| Download Video{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}2.| Download Audio (MP3){Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}3.| Cancel{Colors.NORMAL}")
-        draw_line()
-        choice = input("Enter your choice: ")
-        selected_stream = None
-        if 'playlist' in url:
-            playlist = Playlist(url)
-            print(f"Downloading playlist: {playlist.title}")
-            if choice == '1':
-                print_box("Available Video Streams:")
-                yt = YouTube(playlist.video_urls[0])
-                video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
-                for i, stream in enumerate(video_streams, start=1):
-                    print(f"{Colors.BLUE}{Colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{Colors.NORMAL}")
-                selected_stream = int(input("Enter the number of the stream to download: "))
-                selected_stream -= 1
-            for url in playlist.video_urls:
-                download_video_or_audio(url, auto_download=True, choice=choice, selected_stream=selected_stream)
-        else:
-            download_video_or_audio(url, choice=choice, selected_stream=selected_stream)
-    except Exception as e:
-        logging.error(f"YouTube download failed. Error: {e}")
-        print(f"Error: {e}")
-
-def download_video_or_audio(url, auto_download=False, choice=None, selected_stream=None):
-    try:
-        yt = YouTube(url)
-        print(f"{Colors.GREEN}{Colors.BOLD}Title: {yt.title}{Colors.NORMAL}")
-        print(f"{Colors.GREEN}{Colors.BOLD}Duration: {yt.length // 60} minutes {yt.length % 60} seconds{Colors.NORMAL}")
-        if choice == '1':
-            if selected_stream is None:
-                print_box("Available Video Streams:")
-                video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
-                for i, stream in enumerate(video_streams, start=1):
-                    print(f"{Colors.BLUE}{Colors.BOLD}{i}.| {stream.resolution} - {stream.filesize / 1024 / 1024:.2f} MB{Colors.NORMAL}")
-                selected_stream = int(input("Enter the number of the stream to download: "))
-                selected_stream -= 1
-            download_video(yt, selected_stream)
-        elif choice == '2':
-            download_audio(yt)
-        elif choice == '3':
-            print("Download canceled.")
-        else:
-            print("Invalid option. Download canceled.")
-    except Exception as e:
-        logging.error(f"Download failed. Error: {e}")
-        print(f"Error: {e}")
-
-def download_video(yt, selected_stream, max_retries=3):
-    try:
-        video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
-        if selected_stream is not None:
-            video = video_streams[selected_stream]
-        else:
-            video = video_streams.first()
-        print(f"{Colors.GREEN}{Colors.BOLD}Downloading: {video.resolution} - {video.filesize / 1024 / 1024:.2f} MB{Colors.NORMAL}")
-        folder_path = os.path.join(os.getcwd(), 'VideosDownloads')
-        os.makedirs(folder_path, exist_ok=True)
-        file_path = os.path.join(folder_path, f"{slugify(yt.title)}_video.mp4")
-        retry_count = 0
-        while retry_count < max_retries:
-            try:
-                response = requests.get(video.url, stream=True)
-                response.raise_for_status()
-                total_size = int(response.headers.get('content-length', 0))
-                # Use tqdm to create a progress bar
-                with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
-                    with open(file_path, 'wb') as f:
-                        for data in response.iter_content(chunk_size=1024):
-                            bar.update(len(data))
-                            f.write(data)
-                print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder")
-                return
-            except requests.RequestException as e:
-                logging.warning(f"Network request failed. Retrying... (Error: {e})")
-                retry_count += 1
-                time.sleep(2 ** retry_count)
-        # If max_retries is reached, log the failure and print an error message
-        logging.error(f"Video download failed after {max_retries} retries. Error: {e}")
-        print(f"Error: Unable to download the video after {max_retries} retries.")
-    except Exception as e:
-        logging.error(f"Video download failed. Error: {e}")
-        print(f"Error: {e}")
-
-def download_audio(yt, max_retries=3):
-    try:
-        audio_streams = yt.streams.filter(only_audio=True)
-        audio = audio_streams[0]
-        print(f"{Colors.GREEN}{Colors.BOLD}Downloading audio: {audio.abr} - {audio.filesize / 1024 / 1024:.2f} MB{Colors.NORMAL}")
-        folder_path = os.path.join(os.getcwd(), 'AudiosDownloads')
-        os.makedirs(folder_path, exist_ok=True)
-        file_path = os.path.join(folder_path, f"{slugify(yt.title)}_audio.mp3")
-        retry_count = 0
-        while retry_count < max_retries:
-            try:
-                response = requests.get(audio.url, stream=True)
-                response.raise_for_status()
-                total_size = int(response.headers.get('content-length', 0))
-                # Use tqdm to create a progress bar
-                with tqdm(total=total_size, unit='b', unit_scale=True, unit_divisor=1024) as bar:
-                    with open(file_path, 'wb') as f:
-                        for data in response.iter_content(chunk_size=1024):
-                            bar.update(len(data))
-                            f.write(data)
-                print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3 in the AudioDownloads folder")
-                return
-            except requests.RequestException as e:
-                logging.warning(f"Network request failed. Retrying... (Error: {e})")
-                retry_count += 1
-                time.sleep(2 ** retry_count)
-        # If max_retries is reached, log the failure and print an error message
-        logging.error(f"Audio download failed after {max_retries} retries. Error: {e}")
-        print(f"Error: Unable to download the audio after {max_retries} retries.")
-    except Exception as e:
-        logging.error(f"Audio download failed. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to scan for malware or viruses on the system
+	try:
+		A=input('Enter the YouTube video URL or playlist URL: ');print_box('Choose an option:');print(f"{Colors.BLUE}{Colors.BOLD}1.| Download Video{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD}2.| Download Audio (MP3){Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD}3.| Cancel{Colors.NORMAL}");draw_line();C=input(_G);B=_B
+		if'playlist'in A:
+			D=Playlist(A);print(f"Downloading playlist: {D.title}")
+			if C=='1':
+				print_box(_H);G=YouTube(D.video_urls[0]);H=G.streams.filter(file_extension=_E,progressive=_A)
+				for(I,E)in enumerate(H,start=1):print(f"{Colors.BLUE}{Colors.BOLD}{I}.| {E.resolution} - {E.filesize/1024/1024:.2f} MB{Colors.NORMAL}")
+				B=int(input(_I));B-=1
+			for A in D.video_urls:download_video_or_audio(A,auto_download=_A,choice=C,selected_stream=B)
+		else:download_video_or_audio(A,choice=C,selected_stream=B)
+	except Exception as F:logging.error(f"YouTube download failed. Error: {F}");print(f"Error: {F}")
+def download_video_or_audio(url,auto_download=_D,choice=_B,selected_stream=_B):
+	C=choice;B=selected_stream
+	try:
+		A=YouTube(url);print(f"{Colors.GREEN}{Colors.BOLD}Title: {A.title}{Colors.NORMAL}");print(f"{Colors.GREEN}{Colors.BOLD}Duration: {A.length//60} minutes {A.length%60} seconds{Colors.NORMAL}")
+		if C=='1':
+			if B is _B:
+				print_box(_H);F=A.streams.filter(file_extension=_E,progressive=_A)
+				for(G,D)in enumerate(F,start=1):print(f"{Colors.BLUE}{Colors.BOLD}{G}.| {D.resolution} - {D.filesize/1024/1024:.2f} MB{Colors.NORMAL}")
+				B=int(input(_I));B-=1
+			download_video(A,B)
+		elif C=='2':download_audio(A)
+		elif C=='3':print('Download canceled.')
+		else:print('Invalid option. Download canceled.')
+	except Exception as E:logging.error(f"Download failed. Error: {E}");print(f"Error: {E}")
+def download_video(yt,selected_stream,max_retries=3):
+	F=selected_stream;C=max_retries
+	try:
+		G=yt.streams.filter(file_extension=_E,progressive=_A)
+		if F is not _B:B=G[F]
+		else:B=G.first()
+		print(f"{Colors.GREEN}{Colors.BOLD}Downloading: {B.resolution} - {B.filesize/1024/1024:.2f} MB{Colors.NORMAL}");H=os.path.join(os.getcwd(),'VideosDownloads');os.makedirs(H,exist_ok=_A);J=os.path.join(H,f"{slugify(yt.title)}_video.mp4");D=0
+		while D<C:
+			try:
+				E=requests.get(B.url,stream=_A);E.raise_for_status();K=int(E.headers.get(_J,0))
+				with tqdm(total=K,unit='b',unit_scale=_A,unit_divisor=1024)as L:
+					with open(J,'wb')as M:
+						for I in E.iter_content(chunk_size=1024):L.update(len(I));M.write(I)
+				print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder");return
+			except requests.RequestException as A:logging.warning(f"Network request failed. Retrying... (Error: {A})");D+=1;time.sleep(2**D)
+		logging.error(f"Video download failed after {C} retries. Error: {A}");print(f"Error: Unable to download the video after {C} retries.")
+	except Exception as A:logging.error(f"Video download failed. Error: {A}");print(f"Error: {A}")
+def download_audio(yt,max_retries=3):
+	B=max_retries
+	try:
+		H=yt.streams.filter(only_audio=_A);C=H[0];print(f"{Colors.GREEN}{Colors.BOLD}Downloading audio: {C.abr} - {C.filesize/1024/1024:.2f} MB{Colors.NORMAL}");F=os.path.join(os.getcwd(),'AudiosDownloads');os.makedirs(F,exist_ok=_A);I=os.path.join(F,f"{slugify(yt.title)}_audio.mp3");D=0
+		while D<B:
+			try:
+				E=requests.get(C.url,stream=_A);E.raise_for_status();J=int(E.headers.get(_J,0))
+				with tqdm(total=J,unit='b',unit_scale=_A,unit_divisor=1024)as K:
+					with open(I,'wb')as L:
+						for G in E.iter_content(chunk_size=1024):K.update(len(G));L.write(G)
+				print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3 in the AudioDownloads folder");return
+			except requests.RequestException as A:logging.warning(f"Network request failed. Retrying... (Error: {A})");D+=1;time.sleep(2**D)
+		logging.error(f"Audio download failed after {B} retries. Error: {A}");print(f"Error: Unable to download the audio after {B} retries.")
+	except Exception as A:logging.error(f"Audio download failed. Error: {A}");print(f"Error: {A}")
 def scan_for_malware():
-    try:
-        # Replace 'clamscan' with the actual command of your antivirus tool
-        run_command('clamscan --infected --recursive --suppress-ok-results', "Scanning for malware or viruses...")
-        print_box("Malware scan completed.")
-    except Exception as e:
-        logging.error(f"Malware scan failed. Error: {e}")
-        print(f"Error: {e}")
-
-# Function to check the strength of user passwords
+	try:run_command('clamscan --infected --recursive --suppress-ok-results','Scanning for malware or viruses...');print_box('Malware scan completed.')
+	except Exception as A:logging.error(f"Malware scan failed. Error: {A}");print(f"Error: {A}")
 def check_password_strength():
-    try:
-        print_box("Checking password strength...")
-        user_password = input("Enter the password to check its strength: ")
-        strength_message, color = get_password_strength(user_password)
-        print_colored_box(strength_message, color)
-    except Exception as e:
-        logging.error(f"Password strength check failed. Error: {e}")
-        print(f"Error: {e}")
-
+	try:print_box('Checking password strength...');B=input('Enter the password to check its strength: ');C,D=get_password_strength(B);print_colored_box(C,D)
+	except Exception as A:logging.error(f"Password strength check failed. Error: {A}");print(f"Error: {A}")
 def get_password_strength(password):
-    if len(password) >= 16 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password) and re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        return "Password strength: Super Strong", Fore.GREEN
-    elif len(password) >= 12 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password):
-        return "Password strength: Strong", Fore.CYAN
-    elif len(password) >= 8 and re.search(r'[A-Za-z]', password) and re.search(r'\d', password):
-        return "Password strength: Medium", Fore.YELLOW
-    elif len(password) >= 6:
-        return "Password strength: Weak", Fore.RED
-    else:
-        return "Password strength: Super Weak", Fore.MAGENTA
-
-def print_colored_box(message, color):
-    draw_line()
-    print(color + Style.BRIGHT + message + Style.RESET_ALL)
-    draw_line()
-
-# Function to perform a traceroute to a specified destination
+	D='[a-z]';C='[A-Z]';B='\\d';A=password
+	if len(A)>=16 and re.search(C,A)and re.search(D,A)and re.search(B,A)and re.search('[!@#$%^&*(),.?":{}|<>]',A):return'Password strength: Super Strong',Fore.GREEN
+	elif len(A)>=12 and re.search(C,A)and re.search(D,A)and re.search(B,A):return'Password strength: Strong',Fore.CYAN
+	elif len(A)>=8 and re.search('[A-Za-z]',A)and re.search(B,A):return'Password strength: Medium',Fore.YELLOW
+	elif len(A)>=6:return'Password strength: Weak',Fore.RED
+	else:return'Password strength: Super Weak',Fore.MAGENTA
+def print_colored_box(message,color):draw_line();print(color+Style.BRIGHT+message+Style.RESET_ALL);draw_line()
 def perform_traceroute():
-    try:
-        print_box("Performing traceroute...")
-        destination = input("Enter the destination for traceroute: ")
-        # Use 'traceroute' command to perform traceroute
-        run_command(f'traceroute {destination}', "Performing traceroute...")
-    except Exception as e:
-        logging.error(f"Traceroute failed. Error: {e}")
-        print(f"Error: {e}")
-
-#Menu
+	B='Performing traceroute...'
+	try:print_box(B);C=input('Enter the destination for traceroute: ');run_command(f"traceroute {C}",B)
+	except Exception as A:logging.error(f"Traceroute failed. Error: {A}");print(f"Error: {A}")
 def menu():
-    while True:
-        draw_line()
-        print(Colors.CYAN + Colors.BOLD)
-        os.system('figlet -f standard " M E N U " | lolcat')
-        print(Colors.NORMAL)
-        draw_line()
-        print(f"{Colors.CYAN}{Colors.BOLD}1.| Update the system{Colors.NORMAL}")
-        print(f"{Colors.MAGENTA}{Colors.BOLD}2.| Ping a website or IP{Colors.NORMAL}")
-        print(f"{Colors.MAGENTA}{Colors.BOLD}3.| Geolocate an IP{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}4.| Disk Usage{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}5.| Memory Usage{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}6.| System Uptime{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}7.| List Running Processes{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}8.| Network Information{Colors.NORMAL}")
-        print(f"{Colors.BLUE}{Colors.BOLD}9.| System Information{Colors.NORMAL}")
-        print(f"{Colors.MAGENTA}{Colors.BOLD}10.| Scan for Malware{Colors.NORMAL}")
-        print(f"{Colors.MAGENTA}{Colors.BOLD}11.| Check Password Strength{Colors.NORMAL}")
-        print(f"{Colors.MAGENTA}{Colors.BOLD}12.| Perform Traceroute{Colors.NORMAL}")
-        print(f"{Colors.GREEN}{Colors.BOLD}13.| Download YouTube Video or MP3{Colors.NORMAL}")
-        print(f"{Colors.YELLOW}{Colors.BOLD}14.| Update the Script{Colors.NORMAL}") 
-        print(f"{Colors.RED}{Colors.BOLD}15.| Exit{Colors.NORMAL}")
-        draw_line()
-        try:
-            choice = int(input("Enter your choice: "))
-            if choice == 1:
-                update_system()
-            elif choice == 2:
-                ping_site()
-            elif choice == 3:
-                geolocate_ip()
-            elif choice == 4:
-                disk_usage()
-            elif choice == 5:
-                memory_usage()
-            elif choice == 6:
-                system_uptime()
-            elif choice == 7:
-                list_processes()
-            elif choice == 8:
-                network_info()
-            elif choice == 9:
-                system_information()
-            elif choice == 10:
-                scan_for_malware()
-            elif choice == 11:
-                check_password_strength()
-            elif choice == 12:
-                perform_traceroute()
-            elif choice == 13:
-                download_youtube()
-            elif choice == 14:
-                update_script()
-            elif choice == 15:
-                break
-            else:
-                print("Invalid option. Please try again.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-
-if __name__ == "__main__":
-    menu()
+	while _A:
+		draw_line();print(f"{Colors.CYAN}{Colors.BOLD}");os.system('figlet -f standard " M e n u " | lolcat');print(Colors.NORMAL);draw_line();print(f"{Colors.CYAN}{Colors.BOLD} 1.| {Colors.CYAN}Update the system{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 2.| {Colors.BLUE}Ping a website or IP{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 3.| {Colors.BLUE}Geolocate an IP{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 4.| {Colors.BLUE}Disk Usage{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 5.| {Colors.BLUE}Memory Usage{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 6.| {Colors.BLUE}System Uptime{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 7.| {Colors.BLUE}List Running Processes{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 8.| {Colors.BLUE}Network Information{Colors.NORMAL}");print(f"{Colors.BLUE}{Colors.BOLD} 9.| {Colors.BLUE}System Information{Colors.NORMAL}");print(f"{Colors.YELLOW}{Colors.BOLD}10.| {Colors.YELLOW}Scan for Malware{Colors.NORMAL}");print(f"{Colors.YELLOW}{Colors.BOLD}11.| {Colors.YELLOW}Check Password Strength{Colors.NORMAL}");print(f"{Colors.YELLOW}{Colors.BOLD}12.| {Colors.YELLOW}Perform Traceroute{Colors.NORMAL}");print(f"{Colors.GREEN}{Colors.BOLD}13.| {Colors.GREEN}Download YouTube Video or MP3{Colors.NORMAL}");print(f"{Colors.GREEN}{Colors.BOLD}14.| {Colors.GREEN}Update the Script{Colors.NORMAL}");print(f"{Colors.RED}{Colors.BOLD}15.| {Colors.RED}Exit{Colors.NORMAL}");draw_line()
+		try:
+			A=int(input(_G))
+			if A==1:update_system()
+			elif A==2:ping_site()
+			elif A==3:geolocate_ip()
+			elif A==4:disk_usage()
+			elif A==5:memory_usage()
+			elif A==6:system_uptime()
+			elif A==7:list_processes()
+			elif A==8:network_info()
+			elif A==9:system_information()
+			elif A==10:scan_for_malware()
+			elif A==11:check_password_strength()
+			elif A==12:perform_traceroute()
+			elif A==13:download_youtube()
+			elif A==14:update_script()
+			elif A==15:break
+			else:print('Invalid option. Please try again.')
+		except ValueError:print('Invalid input. Please enter a number.')
+if __name__=='__main__':menu()
