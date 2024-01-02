@@ -9,7 +9,8 @@
  #### 🖼️ Screenshot
 
     
- ![Screenshot_20240101-115401.png](https://github.com/V4mpw0L/Tools/assets/125161567/929265f8-83bc-4140-ae50-feb65303fc97)
+ ![Screenshot_20240101-165524.png](https://github.com/V4mpw0L/Tools/assets/125161567/1d10bc46-3467-431b-917d-178bd85802d6)
+
 
     
 ### ⚙️ Installation
