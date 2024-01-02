@@ -27,7 +27,7 @@
 
 ##### Clone this repository
 
- - ```git clone https://github.com/V4mpw0L/Tools.git```
+ - ```git clone https://github.com/V4mpw0L/PyTools.git```
 
 ##### Enter the directory
  - ```cd Tools```
