@@ -395,6 +395,9 @@ def download_video_or_audio(url, auto_download=False, choice=None, selected_stre
         logging.error(f"Download failed. Error: {e}")
         print(f"Error: {e}")
 
+def slugify_title(title):
+    return re.sub(r'[^a-zA-Z0-9]', '_', title)
+
 def download_video(yt, selected_stream, max_retries=3):
     try:
         video_streams = yt.streams.filter(file_extension='mp4', progressive=True)
@@ -402,10 +405,12 @@ def download_video(yt, selected_stream, max_retries=3):
             video = video_streams[selected_stream]
         else:
             video = video_streams.first()
-        print(f"{Colors.GREEN}{Colors.BOLD}Downloading: {video.resolution} - {video.filesize / 1024 / 1024:.2f} MB{Colors.NORMAL}")
+        
+        video_title = slugify_title(yt.title)
+
         folder_path = os.path.join(os.getcwd(), 'VideosDownloads')
         os.makedirs(folder_path, exist_ok=True)
-        file_path = os.path.join(folder_path, f"{slugify(yt.title)}_video.mp4")
+        file_path = os.path.join(folder_path, f"{slugify_title(video_title)}_video.mp4")
         retry_count = 0
         while retry_count < max_retries:
             try:
@@ -418,7 +423,7 @@ def download_video(yt, selected_stream, max_retries=3):
                         for data in response.iter_content(chunk_size=1024):
                             bar.update(len(data))
                             f.write(data)
-                print_box(f"Video downloaded successfully as {slugify(yt.title)}_video.mp4 in the PlaylistVideos folder")
+                print_box(f"Video downloaded successfully as {slugify(video_title)}_video.mp4 in the PlaylistVideos folder")
                 return
             except requests.RequestException as e:
                 logging.warning(f"Network request failed. Retrying... (Error: {e})")
@@ -430,14 +435,16 @@ def download_video(yt, selected_stream, max_retries=3):
         logging.error(f"Video download failed. Error: {e}")
         print(f"Error: {e}")
 
+
 def download_audio(yt, max_retries=3):
     try:
         audio_streams = yt.streams.filter(only_audio=True)
         audio = audio_streams[0]
-        print(f"{Colors.GREEN}{Colors.BOLD}Downloading audio: {audio.abr} - {audio.filesize / 1024 / 1024:.2f} MB{Colors.NORMAL}")
+        audio_title = slugify_title(yt.title)
+
         folder_path = os.path.join(os.getcwd(), 'AudiosDownloads')
         os.makedirs(folder_path, exist_ok=True)
-        file_path = os.path.join(folder_path, f"{slugify(yt.title)}_audio.mp3")
+        file_path = os.path.join(folder_path, f"{slugify_title(audio_title)}_audio.mp3")
         retry_count = 0
         while retry_count < max_retries:
             try:
@@ -450,7 +457,7 @@ def download_audio(yt, max_retries=3):
                         for data in response.iter_content(chunk_size=1024):
                             bar.update(len(data))
                             f.write(data)
-                print_box(f"Audio downloaded successfully as {slugify(yt.title)}_audio.mp3 in the AudioDownloads folder")
+                print_box(f"Audio downloaded successfully as {slugify(audio_title)}_audio.mp3 in the AudiosDownloads folder")
                 return
             except requests.RequestException as e:
                 logging.warning(f"Network request failed. Retrying... (Error: {e})")
