@@ -87,6 +87,9 @@
 - **Update the Script**: 
   - Connects seamlessly with the GitHub branch to update the script using GIT PULL.
 
+- **Temporary Email**: 
+  - Generate temporary email addresses.
+
 - **Exit**: 
   - Exits the script. Alternatively, use CTRL + C to halt the script abruptly.
 
