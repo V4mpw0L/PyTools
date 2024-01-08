@@ -29,14 +29,14 @@
  - ```git clone https://github.com/V4mpw0L/PyTools.git```
 
 ##### Enter the directory
- - ```cd Tools```
+ - ```cd PyTools```
 
 ##### PIP install Requeriments
 
  - ```pip install -r requirements.txt```
 
 ##### Run the tool
- - ```python3 tools.py```
+ - ```python3 pytools.py```
 
     ## 📝 Description
 
