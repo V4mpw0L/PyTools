@@ -5,3 +5,4 @@ requests
 slugify
 colorama
 rich
+lolcat
