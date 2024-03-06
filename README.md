@@ -48,7 +48,7 @@
   - Provides an all-in-one command to update, upgrade, autoremove, and autoclean the system.
 
 - **Ping a Website**: 
-  - Allows you to ping a website, retrieving its IP Address using PING -C. Make sure to have DNSUTILS installed (sudo apt-get install dnsutils). 
+  - Allows you to ping a website, retrieving its IP Address using PING -C. Make sure to have DNSUTILS installed ```(sudo apt-get install dnsutils)```. 
 
 - **Geolocate an IP**: 
   - Provides the capability to determine the geographical location of an IP Address using REQUESTS.GET.
