@@ -110,30 +110,241 @@ class PingModule(BaseModule):
                 self.display.show_warning("No internet connection detected")
 
             self.display.console.print()
-            self.display.show_info(f"Pinging {host}...\n")
+            self.display.show_section("🔍 Resolving Host Information")
+
+            # Resolve hostname to IP
+            ip_address = None
+            hostname = None
+
+            try:
+                # Check if input is IP or hostname
+                if validate_ip(host):
+                    ip_address = host
+                    # Try reverse DNS lookup
+                    try:
+                        hostname = socket.gethostbyaddr(host)[0]
+                        self.display.console.print(
+                            f"[cyan]IP Address:[/cyan] [green]{ip_address}[/green]"
+                        )
+                        self.display.console.print(
+                            f"[cyan]Hostname:[/cyan] [yellow]{hostname}[/yellow]"
+                        )
+                    except:
+                        self.display.console.print(
+                            f"[cyan]IP Address:[/cyan] [green]{ip_address}[/green]"
+                        )
+                        self.display.console.print(
+                            f"[cyan]Hostname:[/cyan] [dim]Not available[/dim]"
+                        )
+                else:
+                    hostname = host
+                    # Forward DNS lookup
+                    ip_address = socket.gethostbyname(host)
+                    self.display.console.print(
+                        f"[cyan]Hostname:[/cyan] [yellow]{hostname}[/yellow]"
+                    )
+                    self.display.console.print(
+                        f"[cyan]IP Address:[/cyan] [green]{ip_address}[/green]"
+                    )
+
+                    # Get all IPs for this hostname
+                    try:
+                        all_ips = socket.gethostbyname_ex(host)[2]
+                        if len(all_ips) > 1:
+                            self.display.console.print(
+                                f"[cyan]Additional IPs:[/cyan] [dim]{', '.join(all_ips[1:])}[/dim]"
+                            )
+                    except:
+                        pass
+
+            except socket.gaierror:
+                self.display.show_error(f"Could not resolve hostname: {host}")
+                return False
+            except Exception as e:
+                self.display.show_error(f"DNS lookup failed: {str(e)}")
+                return False
+
+            self.display.console.print()
+            self.display.show_section("📡 Ping Statistics")
 
             # Determine ping command based on OS
             if self.system_info.os_type == "windows":
-                cmd = f"ping -n 4 {host}"
+                cmd = f"ping -n 8 {ip_address}"
             else:
-                cmd = f"ping -c 4 {host}"
+                cmd = f"ping -c 8 -W 2 {ip_address}"
 
-            # Execute ping
-            result = self.executor.run(cmd, timeout=30)
+            # Execute ping and capture output
+            result = self.executor.run(cmd, timeout=30, capture_output=True)
 
             if result.returncode == 0:
                 self.display.console.print()
-                self.display.show_success(f"Successfully pinged {host}")
+
+                # Parse ping output for detailed stats
+                output = result.stdout
+
+                # Show raw ping output with colors
+                self._display_colored_ping_output(output)
+
+                # Parse and display statistics
+                self.display.console.print()
+                self._parse_and_display_stats(output, ip_address, hostname or host)
+
+                self.display.console.print()
+                self.display.show_success(f"✓ Successfully pinged {hostname or host}")
                 return True
             else:
                 self.display.console.print()
-                self.display.show_error(f"Failed to ping {host}")
+                self.display.console.print(f"[red]{result.stdout}[/red]")
+                self.display.console.print()
+                self.display.show_error(f"✗ Failed to ping {host}")
                 return False
 
         except Exception as e:
             self.log_error("Ping failed", e)
             self.display.show_error(f"Ping failed: {str(e)}")
             return False
+
+    def _display_colored_ping_output(self, output: str):
+        """Display ping output with syntax highlighting"""
+        lines = output.split("\n")
+
+        for line in lines:
+            if not line.strip():
+                continue
+
+            # Highlight different parts of ping output
+            if "bytes from" in line.lower() or "reply from" in line.lower():
+                # Successful ping response
+                parts = line.split()
+                colored_line = ""
+                for part in parts:
+                    if "time=" in part or "time<" in part:
+                        colored_line += f"[bright_green]{part}[/bright_green] "
+                    elif "ttl=" in part.lower():
+                        colored_line += f"[cyan]{part}[/cyan] "
+                    elif "bytes" in part:
+                        colored_line += f"[yellow]{part}[/yellow] "
+                    else:
+                        colored_line += f"{part} "
+                self.display.console.print(f"  [green]✓[/green] {colored_line.strip()}")
+            elif "packet loss" in line.lower() or "transmitted" in line.lower():
+                # Statistics line
+                self.display.console.print(f"[cyan]{line}[/cyan]")
+            elif "min/" in line.lower() or "rtt" in line.lower():
+                # RTT statistics
+                self.display.console.print(f"[magenta]{line}[/magenta]")
+            elif "timeout" in line.lower() or "unreachable" in line.lower():
+                self.display.console.print(f"  [red]✗[/red] [red]{line}[/red]")
+            else:
+                self.display.console.print(f"[dim]{line}[/dim]")
+
+    def _parse_and_display_stats(self, output: str, ip: str, host: str):
+        """Parse ping output and display detailed statistics"""
+        import re
+
+        stats = {
+            "Target": f"{host}" if host != ip else ip,
+            "IP Address": ip,
+        }
+
+        # Parse packets transmitted/received
+        transmitted = re.search(r"(\d+) packets transmitted", output)
+        received = re.search(r"(\d+) received", output)
+        loss = re.search(r"(\d+)% packet loss", output)
+
+        if transmitted:
+            stats["Packets Sent"] = transmitted.group(1)
+        if received:
+            stats["Packets Received"] = received.group(1)
+            success_rate = (
+                (int(received.group(1)) / int(transmitted.group(1)) * 100)
+                if transmitted
+                else 0
+            )
+            if success_rate == 100:
+                stats["Success Rate"] = f"[green]{success_rate:.0f}%[/green]"
+            elif success_rate >= 75:
+                stats["Success Rate"] = f"[yellow]{success_rate:.0f}%[/yellow]"
+            else:
+                stats["Success Rate"] = f"[red]{success_rate:.0f}%[/red]"
+        if loss:
+            packet_loss = int(loss.group(1))
+            if packet_loss == 0:
+                stats["Packet Loss"] = f"[green]{packet_loss}%[/green]"
+            elif packet_loss < 25:
+                stats["Packet Loss"] = f"[yellow]{packet_loss}%[/yellow]"
+            else:
+                stats["Packet Loss"] = f"[red]{packet_loss}%[/red]"
+
+        # Parse RTT (Round Trip Time) - multiple patterns for different OS
+        rtt_patterns = [
+            r"min/avg/max/(?:mdev|stddev) = ([\d.]+)/([\d.]+)/([\d.]+)/([\d.]+) ms",
+            r"rtt min/avg/max/mdev = ([\d.]+)/([\d.]+)/([\d.]+)/([\d.]+) ms",
+            r"Minimum = (\d+)ms, Maximum = (\d+)ms, Average = (\d+)ms",
+        ]
+
+        for pattern in rtt_patterns:
+            rtt = re.search(pattern, output)
+            if rtt:
+                if len(rtt.groups()) >= 3:
+                    min_rtt = float(rtt.group(1))
+                    avg_rtt = float(rtt.group(2))
+                    max_rtt = float(rtt.group(3))
+
+                    # Color code based on latency
+                    def color_latency(ms):
+                        if ms < 30:
+                            return f"[bright_green]{ms:.1f}ms[/bright_green]"
+                        elif ms < 100:
+                            return f"[green]{ms:.1f}ms[/green]"
+                        elif ms < 200:
+                            return f"[yellow]{ms:.1f}ms[/yellow]"
+                        elif ms < 500:
+                            return f"[orange]{ms:.1f}ms[/orange]"
+                        else:
+                            return f"[red]{ms:.1f}ms[/red]"
+
+                    stats["Min Latency"] = color_latency(min_rtt)
+                    stats["Avg Latency"] = color_latency(avg_rtt)
+                    stats["Max Latency"] = color_latency(max_rtt)
+
+                    if len(rtt.groups()) >= 4:
+                        stats["Std Deviation"] = f"{float(rtt.group(4)):.1f}ms"
+
+                    # Connection quality assessment
+                    if avg_rtt < 30:
+                        quality = "[bright_green]Excellent[/bright_green] ⚡"
+                    elif avg_rtt < 100:
+                        quality = "[green]Good[/green] ✓"
+                    elif avg_rtt < 200:
+                        quality = "[yellow]Fair[/yellow] ~"
+                    elif avg_rtt < 500:
+                        quality = "[orange]Poor[/orange] ⚠"
+                    else:
+                        quality = "[red]Very Poor[/red] ✗"
+
+                    stats["Connection Quality"] = quality
+                break
+
+        # Display statistics in a nice table
+        from rich.table import Table
+
+        table = Table(show_header=False, box=None, padding=(0, 2))
+        table.add_column("Metric", style="cyan bold")
+        table.add_column("Value", style="white")
+
+        for key, value in stats.items():
+            table.add_row(key, value)
+
+        from rich.panel import Panel
+
+        panel = Panel(
+            table,
+            title="[bold bright_cyan]📊 Detailed Statistics[/bold bright_cyan]",
+            border_style="cyan",
+        )
+
+        self.display.console.print(panel)
 
 
 class TracerouteModule(BaseModule):
