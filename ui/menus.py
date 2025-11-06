@@ -86,7 +86,7 @@ class MenuManager:
 
         # Show version and credits
         self.display.console.print(
-            "[dim]Version 2.0.0 | Created by V4mpw0L | 2024[/dim]",
+            "[dim]Version 2.0.0 | Created by V4mpw0L | 2025[/dim]",
             justify="center",
         )
         self.display.console.print()

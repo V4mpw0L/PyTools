@@ -223,7 +223,7 @@ create_alias() {
     create_alias=${create_alias:-Y}
 
     if [[ $create_alias =~ ^[Yy]$ ]]; then
-        PYTOOLS_PATH="$(pwd)/pytools_v2.py"
+        PYTOOLS_PATH="$(pwd)/pytools.py"
 
         # Detect shell
         SHELL_NAME=$(basename "$SHELL")
@@ -267,7 +267,7 @@ run_pytools() {
         echo ""
         print_info "Starting PyTools..."
         sleep 1
-        $PYTHON_CMD pytools_v2.py
+        $PYTHON_CMD pytools.py
     fi
 }
 
@@ -320,7 +320,7 @@ main() {
     echo ""
 
     print_info "PyTools v2.0.0 is ready to use!"
-    print_info "Run: python3 pytools_v2.py"
+    print_info "Run: python3 pytools.py"
     echo ""
 
     # Run PyTools

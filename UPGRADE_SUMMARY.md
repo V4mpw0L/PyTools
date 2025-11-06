@@ -45,9 +45,9 @@ PyTools/
 ├── config/
 │   └── config.yaml    (88 lines - User configuration)
 │
-├── pytools_v2.py      (390 lines - Main application)
+├── pytools.py      (390 lines - Main application)
 ├── install.sh         (331 lines - Auto installer)
-├── requirements_v2.txt (35 lines - Updated dependencies)
+├── requirements.txt (35 lines - Updated dependencies)
 │
 └── Documentation/
     ├── README_v2.md    (564 lines - Complete documentation)
@@ -376,12 +376,12 @@ pytube              # Alternative YT downloader
 
 3. **Install New Dependencies**
    ```bash
-   pip install -r requirements_v2.txt
+   pip install -r requirements.txt
    ```
 
 4. **Run New Version**
    ```bash
-   python3 pytools_v2.py
+   python3 pytools.py
    ```
 
 5. **Old Version Still Available**
@@ -540,7 +540,7 @@ PyTools v2.0.0 represents months of work condensed into a complete rewrite.
 
 Run it now:
 ```bash
-python3 pytools_v2.py
+python3 pytools.py
 ```
 
 Or use the installer:
@@ -552,6 +552,6 @@ Or use the installer:
 
 ---
 
-*Last Updated: 2024-12-XX*  
+*Last Updated: 2025-12-XX*  
 *Version: 2.0.0*  
 *Status: ✅ COMPLETE*

@@ -373,7 +373,7 @@ class Display:
 [dim]A powerful Python toolkit for system management[/dim]
 
 [bold yellow]Created by:[/bold yellow] [red]{author}[/red]
-[bold yellow]Year:[/bold yellow] 2024
+[bold yellow]Year:[/bold yellow] 2025
 [bold yellow]License:[/bold yellow] MIT
 
 [dim]Made with ❤️  and Python 🐍[/dim]
@@ -426,6 +426,11 @@ def show_startup_animation():
             progress.update(task, advance=1)
 
     time.sleep(0.3)
+
+    # Clear screen completely after animation
+    import os
+
+    os.system("clear" if os.name != "nt" else "cls")
 
 
 def show_goodbye_message():

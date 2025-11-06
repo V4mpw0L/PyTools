@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.0.0] - 2024-12-XX
+## [2.0.0] - 2025-12-XX
 
 ### 🎉 MAJOR RELEASE - Complete Rewrite
 
@@ -199,7 +199,7 @@ This is a complete rewrite of PyTools with a focus on modularity, maintainabilit
 - Download paths changed (configurable in config.yaml)
 - Some command-line arguments changed (if used programmatically)
 - Requires Python 3.7+ (dropped 3.6 support)
-- New requirements.txt (install with pip install -r requirements_v2.txt)
+- New requirements.txt (install with pip install -r requirements.txt)
 
 ### 🔄 Migration Guide (v1.0.1 → v2.0.0)
 
@@ -216,12 +216,12 @@ This is a complete rewrite of PyTools with a focus on modularity, maintainabilit
 
 3. **Install new dependencies**
    ```bash
-   pip install -r requirements_v2.txt
+   pip install -r requirements.txt
    ```
 
 4. **Run new version**
    ```bash
-   python3 pytools_v2.py
+   python3 pytools.py
    ```
 
 5. **Configure settings (optional)**
@@ -240,7 +240,7 @@ This is a complete rewrite of PyTools with a focus on modularity, maintainabilit
 
 ---
 
-## [1.0.1] - 2024-01-XX
+## [1.0.1] - 2025-01-XX
 
 ### Added
 - Initial public release
@@ -258,7 +258,7 @@ This is a complete rewrite of PyTools with a focus on modularity, maintainabilit
 
 ---
 
-## [1.0.0] - 2024-01-XX
+## [1.0.0] - 2025-01-XX
 
 ### Added
 - Initial release

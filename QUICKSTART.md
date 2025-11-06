@@ -14,12 +14,12 @@ cd PyTools
 
 ### 2️⃣ Install Dependencies
 ```bash
-pip install -r requirements_v2.txt
+pip install -r requirements.txt
 ```
 
 ### 3️⃣ Run PyTools
 ```bash
-python3 pytools_v2.py
+python3 pytools.py
 ```
 
 ---
@@ -155,14 +155,14 @@ pip install speedtest-cli
 
 ### Issue: Permission Denied
 ```bash
-chmod +x pytools_v2.py
+chmod +x pytools.py
 ```
 
 ### Issue: Module Not Found
 ```bash
 # Make sure you're in the PyTools directory
 cd PyTools
-python3 pytools_v2.py
+python3 pytools.py
 ```
 
 ---
@@ -171,7 +171,7 @@ python3 pytools_v2.py
 
 1. **Create Alias** - Add to `~/.bashrc` or `~/.zshrc`:
    ```bash
-   alias pytools='python3 ~/PyTools/pytools_v2.py'
+   alias pytools='python3 ~/PyTools/pytools.py'
    ```
 
 2. **Update PyTools** - Use built-in updater:
@@ -247,7 +247,7 @@ pytools              # Launch PyTools
 Without alias:
 ```bash
 cd ~/PyTools
-python3 pytools_v2.py
+python3 pytools.py
 ```
 
 ---
@@ -280,7 +280,7 @@ If all checked, you're ready to go! 🎉
 
 Launch PyTools now:
 ```bash
-python3 pytools_v2.py
+python3 pytools.py
 ```
 
 Have fun exploring all 34+ tools! 💪

@@ -1,8 +1,35 @@
-pytube
-tqdm
-alive-progress
-requests
-slugify
-colorama
-rich
-lolcat
+# PyTools v2.0.0 - Requirements
+# Python 3.7+ required
+
+# === Core Dependencies (Required) ===
+rich>=13.0.0           # Beautiful terminal formatting and UI
+requests>=2.31.0       # HTTP requests library
+psutil>=5.9.0          # System and process utilities
+pyyaml>=6.0            # YAML configuration support
+
+# === Optional Dependencies ===
+# Network Tools
+speedtest-cli>=2.1.3   # Internet speed test
+
+# Downloads
+yt-dlp>=2023.0.0       # YouTube downloader (recommended)
+pytube>=15.0.0         # Alternative YouTube downloader
+tqdm>=4.65.0           # Progress bars
+
+# Utilities
+qrcode[pil]>=7.4.0     # QR code generation
+python-whois>=0.8.0    # WHOIS lookup
+
+# Security (optional system tools)
+# ClamAV, chkrootkit, rkhunter should be installed via system package manager
+
+# === Legacy Dependencies ===
+# These were in v1.0.1, kept for compatibility
+colorama>=0.4.6        # Terminal colors (fallback)
+slugify>=0.0.1         # Text slugification
+alive-progress>=3.1.0  # Progress bars (alternative)
+
+# === Development Dependencies (optional) ===
+# pytest>=7.4.0        # Testing framework
+# black>=23.0.0        # Code formatter
+# flake8>=6.0.0        # Linting
