@@ -418,9 +418,9 @@ show_animations: true
 
 ## 📸 Screenshots
 
-```
-Coming soon! (v2.0.0 just released)
-```
+
+*![Image](https://github.com/user-attachments/assets/caecdb86-3dab-42e2-ab86-1a497d2bf4db)*
+
 
 ---
 
