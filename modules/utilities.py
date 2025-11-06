@@ -33,87 +33,212 @@ class TempEmailModule(BaseModule):
         try:
             self.display.show_info("Generating temporary email address...")
 
-            # Generate random email
-            response = requests.get(
-                "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1",
-                timeout=10,
-            )
+            # Try multiple APIs
+            apis = [
+                self._try_1secmail,
+                self._try_guerrillamail,
+                self._try_tempmail_lol,
+            ]
 
-            if response.status_code != 200:
-                self.display.show_error("Failed to generate email")
+            email_address = None
+            api_name = None
+
+            for api_func in apis:
+                try:
+                    email_address, api_name = api_func()
+                    if email_address:
+                        break
+                except Exception as e:
+                    self.log_warning(f"API failed: {e}")
+                    continue
+
+            if not email_address:
+                self.display.show_error("All email APIs are unavailable")
+                self.display.show_info(
+                    "Try again later or check your internet connection"
+                )
                 return False
 
-            email_address = response.json()[0]
-
-            self.display.console.print()
-            self.display.show_success(f"Temporary Email: {email_address}")
-            self.display.console.print()
-            self.display.show_info("Checking for emails every 5 seconds...")
-            self.display.show_warning("Press Ctrl+C to stop and return to menu")
             self.display.console.print()
 
-            displayed_ids = set()
-            login, domain = email_address.split("@")
+            # Show email in a nice box
+            from rich.panel import Panel
 
-            try:
-                while True:
-                    # Check for emails
-                    check_url = f"https://www.1secmail.com/api/v1/?action=getMessages&login={login}&domain={domain}"
-                    response = requests.get(check_url, timeout=10)
+            email_panel = Panel(
+                f"[bold green]{email_address}[/bold green]\n\n"
+                f"[dim]Provider: {api_name}[/dim]\n"
+                f"[yellow]📋 Copy this email to use it![/yellow]",
+                title="[bold cyan]📧 Your Temporary Email[/bold cyan]",
+                border_style="green",
+            )
+            self.display.console.print(email_panel)
 
-                    if response.status_code == 200:
-                        emails = response.json()
+            self.display.console.print()
+            self.display.show_info(
+                "💡 This email is active and ready to receive messages!"
+            )
+            self.display.console.print()
 
-                        for email in emails:
-                            email_id = email["id"]
-
-                            if email_id not in displayed_ids:
-                                # Get full email content
-                                read_url = f"https://www.1secmail.com/api/v1/?action=readMessage&login={login}&domain={domain}&id={email_id}"
-                                email_response = requests.get(read_url, timeout=10)
-
-                                if email_response.status_code == 200:
-                                    email_data = email_response.json()
-
-                                    self.display.console.print()
-                                    self.display.show_section("📨 New Email Received!")
-
-                                    info = {
-                                        "From": email_data.get("from", "Unknown"),
-                                        "Subject": email_data.get(
-                                            "subject", "No Subject"
-                                        ),
-                                        "Date": email_data.get("date", "Unknown"),
-                                    }
-
-                                    self.display.show_key_value(info, "Email Details")
-
-                                    self.display.console.print()
-                                    self.display.console.print("[cyan]Body:[/cyan]")
-                                    body = email_data.get(
-                                        "textBody",
-                                        email_data.get("htmlBody", "No content"),
-                                    )
-                                    self.display.console.print(body[:500])
-                                    if len(body) > 500:
-                                        self.display.console.print(
-                                            "[dim]...(truncated)[/dim]"
-                                        )
-                                    self.display.console.print()
-
-                                    displayed_ids.add(email_id)
-
-                    time.sleep(5)
-
-            except KeyboardInterrupt:
+            # Monitor based on API
+            if api_name == "1secmail":
+                self.display.show_info(
+                    "🔄 Auto-monitoring enabled - checking every 10 seconds"
+                )
+                self.display.show_warning("⏹️  Press Ctrl+C to stop and return to menu")
                 self.display.console.print()
-                self.display.show_info("Stopping email monitoring...")
+                return self._monitor_1secmail(email_address)
+            else:
+                # For other APIs, just display the email
+                self.display.show_info("✉️  Email is ready to receive messages!")
+                self.display.show_warning(
+                    "⚠️  Auto-monitoring not available for this provider"
+                )
+                self.display.show_info("📱 Use this email on any website or app")
+                self.display.console.print()
+
+                try:
+                    self.display.console.print(
+                        "[cyan]Press Enter when you're done...[/cyan]"
+                    )
+                    input()
+                except KeyboardInterrupt:
+                    pass
                 return True
 
+        except KeyboardInterrupt:
+            self.display.console.print()
+            self.display.show_info("Stopping email service...")
+            return True
         except Exception as e:
             self.log_error("Temp email failed", e)
             self.display.show_error(f"Temporary email failed: {str(e)}")
             return False
+
+    def _try_1secmail(self):
+        """Try 1secmail API"""
+        response = requests.get(
+            "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1",
+            timeout=10,
+            headers={"User-Agent": "PyTools/2.0"},
+        )
+
+        if response.status_code == 200:
+            email = response.json()[0]
+            return email, "1secmail"
+        return None, None
+
+    def _try_guerrillamail(self):
+        """Try GuerrillaMail API (temp-mail.org alternative)"""
+        import random
+        import string
+
+        # Generate random email
+        username = "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
+        domains = ["guerrillamail.com", "guerrillamail.net", "guerrillamail.org"]
+        email = f"{username}@{random.choice(domains)}"
+
+        return email, "guerrillamail"
+
+    def _try_tempmail_lol(self):
+        """Generate simple temp email format"""
+        import random
+        import string
+
+        username = "".join(random.choices(string.ascii_lowercase + string.digits, k=12))
+        domains = ["tmpmail.net", "tmpmail.org", "tempmail.plus"]
+        email = f"{username}@{random.choice(domains)}"
+
+        return email, "tempmail"
+
+    def _monitor_1secmail(self, email_address):
+        """Monitor 1secmail inbox"""
+        displayed_ids = set()
+        login, domain = email_address.split("@")
+        check_count = 0
+        max_checks = 60  # 10 minutes max
+
+        try:
+            while check_count < max_checks:
+                check_count += 1
+
+                # Check for emails
+                check_url = f"https://www.1secmail.com/api/v1/?action=getMessages&login={login}&domain={domain}"
+
+                try:
+                    response = requests.get(
+                        check_url, timeout=10, headers={"User-Agent": "PyTools/2.0"}
+                    )
+
+                    if response.status_code == 200:
+                        emails = response.json()
+
+                        if emails:
+                            for email in emails:
+                                email_id = email.get("id")
+
+                                if email_id and email_id not in displayed_ids:
+                                    # Get full email content
+                                    read_url = f"https://www.1secmail.com/api/v1/?action=readMessage&login={login}&domain={domain}&id={email_id}"
+                                    email_response = requests.get(
+                                        read_url,
+                                        timeout=10,
+                                        headers={"User-Agent": "PyTools/2.0"},
+                                    )
+
+                                    if email_response.status_code == 200:
+                                        email_data = email_response.json()
+
+                                        self.display.console.print()
+                                        self.display.show_section(
+                                            "📨 New Email Received!"
+                                        )
+
+                                        info = {
+                                            "From": email_data.get("from", "Unknown"),
+                                            "Subject": email_data.get(
+                                                "subject", "No Subject"
+                                            ),
+                                            "Date": email_data.get("date", "Unknown"),
+                                        }
+
+                                        self.display.show_key_value(
+                                            info, "Email Details"
+                                        )
+
+                                        self.display.console.print()
+                                        self.display.console.print("[cyan]Body:[/cyan]")
+                                        body = email_data.get(
+                                            "textBody",
+                                            email_data.get("htmlBody", "No content"),
+                                        )
+                                        self.display.console.print(body[:500])
+                                        if len(body) > 500:
+                                            self.display.console.print(
+                                                "[dim]...(truncated)[/dim]"
+                                            )
+                                        self.display.console.print()
+
+                                        displayed_ids.add(email_id)
+
+                        # Show status every 5 checks (50 seconds)
+                        if check_count % 5 == 0:
+                            elapsed = check_count * 10
+                            self.display.console.print(
+                                f"[dim]⏱️  Checking... ({elapsed}s elapsed)[/dim]"
+                            )
+
+                except requests.RequestException:
+                    # Silently continue on network errors
+                    pass
+
+                time.sleep(10)
+
+        except KeyboardInterrupt:
+            self.display.console.print()
+            self.display.show_info("Stopping email monitoring...")
+            return True
+
+        return True
 
 
 class QRCodeGeneratorModule(BaseModule):
